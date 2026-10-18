@@ -19,6 +19,7 @@
     <a class="brand" href="#top">MDC HUB</a>
     <nav>
       <a href="#files">Files</a>
+      <a href="#upload">Upload</a>
       <a href="#about">About</a>
     </nav>
   </header>
@@ -37,6 +38,16 @@
         <p id="count">Loading</p>
       </div>
       <div class="grid" id="grid"></div>
+    </section>
+
+    <section class="upload" id="upload">
+      <h2>Upload</h2>
+      <form id="form">
+        <input name="key" type="password" placeholder="Upload key" required>
+        <input name="file" type="file" required>
+        <button>Upload</button>
+        <p id="msg"></p>
+      </form>
     </section>
 
     <section class="about" id="about">

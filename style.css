@@ -57,7 +57,7 @@ nav { display: flex; gap: 22px; }
 nav a { color: var(--muted); text-decoration: none; transition: color 0.25s ease; }
 nav a:hover { color: var(--ink); }
 
-.hero, .files, .about { padding: 10vh 7vw; }
+.hero, .files, .about, .upload { padding: 10vh 7vw; }
 .hero { min-height: 78vh; display: flex; flex-direction: column; justify-content: center; }
 .eyebrow {
   margin: 0 0 12px;
@@ -132,3 +132,8 @@ footer { padding: 28px 7vw 40px; color: var(--muted); border-top: 1px solid var(
   .hero { min-height: 70vh; }
   nav { gap: 14px; }
 }
+
+.upload form { display: grid; gap: 12px; max-width: 420px; }
+.upload input, .upload button { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); color: var(--ink); padding: 12px 14px; font: inherit; }
+.upload button { cursor: pointer; background: var(--accent); color: #12110f; font-weight: 700; }
+#msg { color: var(--muted); min-height: 1.2em; }

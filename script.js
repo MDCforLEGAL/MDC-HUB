@@ -27,3 +27,13 @@ async function loadFiles() {
 }
 
 loadFiles();
+
+document.getElementById('form').onsubmit = async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('msg');
+  msg.textContent = 'Uploading...';
+  const res = await fetch('/api/upload', { method: 'POST', body: new FormData(e.target) });
+  const data = await res.json().catch(() => ({}));
+  msg.textContent = data.ok ? 'Uploaded.' : 'Failed: ' + (data.error || res.status);
+  if (data.ok) { e.target.reset(); loadFiles(); }
+};
