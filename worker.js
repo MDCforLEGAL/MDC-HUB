@@ -100,7 +100,8 @@ async function deleteFile(request, env) {
   if (!token || !uploadKey) return Response.json({ error: 'Server key missing' }, { status: 500 });
   const body = await request.json().catch(() => ({}));
   if (body.key !== uploadKey) return Response.json({ error: 'Wrong key' }, { status: 401 });
-  const name = safeName(body.name);
+  const fromUrl = String(body.file || '').split('/').pop() || '';
+  const name = safeName(decodeURIComponent(fromUrl) || body.name);
   const headers = {
     Authorization: 'Bearer ' + token,
     Accept: 'application/vnd.github+json',
@@ -122,7 +123,7 @@ async function deleteFile(request, env) {
   const listRes = await fetch('https://api.github.com/repos/' + REPO + '/contents/files.json', { headers });
   const listData = listRes.ok ? await listRes.json() : null;
   const items = listData ? JSON.parse(atob(listData.content.replace(/\n/g, ''))) : [];
-  const next = items.filter(item => item.name !== name && item.name !== body.name);
+  const next = items.filter(item => item.name !== body.name && !String(item.file || '').endsWith('/' + name) && item.file !== 'files/' + name);
   const save = await fetch('https://api.github.com/repos/' + REPO + '/contents/files.json', {
     method: 'PUT',
     headers,
