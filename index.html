@@ -17,12 +17,41 @@
 
   <header class="top">
     <a class="brand" href="#top">MDC HUB</a>
-    <nav>
-      <a href="#files">Files</a>
-      <a href="#upload">Upload</a>
-      <a href="#about">About</a>
-    </nav>
+    <button class="menu-btn" id="menu-btn" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </header>
+
+  <aside class="menu" id="menu">
+    <button class="menu-item" data-panel="keys">Key generator</button>
+    <button class="menu-item" data-panel="upload">Upload file</button>
+    <button class="menu-item" data-panel="about">About</button>
+  </aside>
+
+  <section class="panel" id="panel">
+    <button class="panel-close" id="panel-close">Close</button>
+    <div class="panel-page" id="keys">
+      <h2>Key generator</h2>
+      <p>Not for verify. Makes an MDCSB- key.</p>
+      <button id="make-key">Generate</button>
+      <p class="key-out" id="key-out">MDCSB-</p>
+      <button id="copy-key">Copy key</button>
+    </div>
+    <div class="panel-page" id="upload">
+      <h2>Upload file</h2>
+      <form id="form">
+        <input name="key" type="password" placeholder="Upload key" required>
+        <input name="note" type="text" placeholder="Description" maxlength="120">
+        <input name="file" type="file" required>
+        <button>Upload</button>
+        <p id="msg"></p>
+      </form>
+    </div>
+    <div class="panel-page" id="about">
+      <h2>About</h2>
+      <p>MDC HUB is a simple public shelf. What is uploaded here is visible to anyone with the link.</p>
+    </div>
+  </section>
 
   <main id="top">
     <section class="hero">
@@ -38,22 +67,6 @@
         <p id="count">Loading</p>
       </div>
       <div class="grid" id="grid"></div>
-    </section>
-
-    <section class="upload" id="upload">
-      <h2>Upload</h2>
-      <form id="form">
-        <input name="key" type="password" placeholder="Upload key" required>
-        <input name="note" type="text" placeholder="Description" maxlength="120">
-        <input name="file" type="file" required>
-        <button>Upload</button>
-        <p id="msg"></p>
-      </form>
-    </section>
-
-    <section class="about" id="about">
-      <h2>About</h2>
-      <p>MDC HUB is a simple public shelf. What is uploaded here is visible to anyone with the link.</p>
     </section>
   </main>
 

@@ -84,9 +84,35 @@ document.getElementById('form').onsubmit = async (e) => {
   if (data.ok) { e.target.reset(); loadFiles(); }
 };
 
-const pop = document.getElementById('discord-pop');
-if (localStorage.getItem('mdc-pop-closed') === '1') pop.classList.add('hidden');
 document.getElementById('close-pop').onclick = () => {
-  pop.classList.add('hidden');
-  localStorage.setItem('mdc-pop-closed', '1');
+  document.getElementById('discord-pop').classList.add('hidden');
+};
+
+const menu = document.getElementById('menu');
+const panel = document.getElementById('panel');
+document.getElementById('menu-btn').onclick = () => {
+  menu.classList.toggle('open');
+  if (!menu.classList.contains('open')) panel.classList.remove('open');
+};
+document.querySelectorAll('.menu-item').forEach(button => {
+  button.onclick = () => {
+    document.querySelectorAll('.panel-page').forEach(page => page.classList.remove('active'));
+    document.getElementById(button.dataset.panel).classList.add('active');
+    panel.classList.add('open');
+    menu.classList.remove('open');
+  };
+});
+document.getElementById('panel-close').onclick = () => panel.classList.remove('open');
+
+const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function makeKey() {
+  let body = '';
+  for (let i = 0; i < 8; i++) body += chars[Math.floor(Math.random() * chars.length)];
+  return 'MDCSB-' + body;
+}
+document.getElementById('make-key').onclick = () => {
+  document.getElementById('key-out').textContent = makeKey();
+};
+document.getElementById('copy-key').onclick = async () => {
+  await navigator.clipboard.writeText(document.getElementById('key-out').textContent);
 };
