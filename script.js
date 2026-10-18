@@ -34,6 +34,6 @@ document.getElementById('form').onsubmit = async (e) => {
   msg.textContent = 'Uploading...';
   const res = await fetch('/api/upload', { method: 'POST', body: new FormData(e.target) });
   const data = await res.json().catch(() => ({}));
-  msg.textContent = data.ok ? 'Uploaded.' : 'Failed: ' + (data.error || res.status);
+  msg.textContent = data.ok ? 'Uploaded.' : 'Failed: ' + (data.error || res.status) + (data.github ? ' | ' + data.github : '');
   if (data.ok) { e.target.reset(); loadFiles(); }
 };

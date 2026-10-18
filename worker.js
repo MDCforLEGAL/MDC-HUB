@@ -62,7 +62,10 @@ async function uploadFile(request, env) {
     headers,
     body: JSON.stringify({ message: 'Add ' + name, content: b64, sha: existingData && existingData.sha })
   });
-  if (!put.ok) return Response.json({ error: 'Upload failed' }, { status: 500 });
+  if (!put.ok) {
+    const detail = await put.text();
+    return Response.json({ error: 'Upload failed', github: put.status + ' ' + detail.slice(0, 300) }, { status: 500 });
+  }
 
   const listRes = await fetch('https://api.github.com/repos/' + REPO + '/contents/files.json', { headers });
   const listData = listRes.ok ? await listRes.json() : null;
@@ -83,6 +86,9 @@ async function uploadFile(request, env) {
       sha: listData && listData.sha
     })
   });
-  if (!save.ok) return Response.json({ error: 'List update failed' }, { status: 500 });
+  if (!save.ok) {
+    const detail = await save.text();
+    return Response.json({ error: 'List update failed', github: save.status + ' ' + detail.slice(0, 300) }, { status: 500 });
+  }
   return Response.json({ ok: true, name });
 }
