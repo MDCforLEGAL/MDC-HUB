@@ -1,44 +1,78 @@
+const REPO = 'MDCforLEGAL/MDC-HUB';
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === '/api/files') return listFiles(env);
+    if (url.pathname === '/api/files') return listFiles();
     if (url.pathname === '/api/upload' && request.method === 'POST') return uploadFile(request, env);
-    if (url.pathname.startsWith('/f/')) return serveFile(url.pathname.slice(3), env);
     if (url.pathname === '/' || url.pathname === '/index.html') return new Response(html, { headers: { 'content-type': 'text/html; charset=utf-8' } });
     return new Response('Not found', { status: 404 });
   }
 };
 
-async function listFiles(env) {
-  if (!env.FILES) return Response.json({ error: 'R2 not connected' }, { status: 500 });
-  const listed = await env.FILES.list();
-  const files = listed.objects.map(obj => ({
-    name: obj.key,
-    file: '/f/' + encodeURIComponent(obj.key),
-    size: obj.size,
-    uploaded: obj.uploaded
-  }));
-  return Response.json(files);
+async function gh(path, options = {}) {
+  const res = await fetch('https://api.github.com/repos/' + REPO + path, {
+    ...options,
+    headers: {
+      Accept: 'application/vnd.github+json',
+      'User-Agent': 'mdc-hub',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok) throw new Error('GitHub ' + res.status);
+  return res.json();
+}
+
+async function listFiles() {
+  try {
+    const data = await gh('/contents/files.json');
+    const items = JSON.parse(atob(data.content.replace(/\n/g, '')));
+    return Response.json(items);
+  } catch {
+    return Response.json([]);
+  }
+}
+
+function safeName(name) {
+  return String(name || 'file').replace(/[^\w.\- ]/g, '_').slice(0, 80);
 }
 
 async function uploadFile(request, env) {
-  if (!env.FILES) return Response.json({ error: 'R2 not connected' }, { status: 500 });
-  const key = env.UPLOAD_KEY;
-  if (!key) return Response.json({ error: 'UPLOAD_KEY missing' }, { status: 500 });
+  if (!env.GITHUB_TOKEN) return Response.json({ error: 'GITHUB_TOKEN missing' }, { status: 500 });
+  if (!env.UPLOAD_KEY) return Response.json({ error: 'UPLOAD_KEY missing' }, { status: 500 });
   const form = await request.formData();
-  if (form.get('key') !== key) return Response.json({ error: 'Wrong key' }, { status: 401 });
+  if (form.get('key') !== env.UPLOAD_KEY) return Response.json({ error: 'Wrong key' }, { status: 401 });
   const file = form.get('file');
   if (!file || typeof file === 'string') return Response.json({ error: 'No file' }, { status: 400 });
-  const name = (file.name || 'file').replace(/[^\w.\- ]/g, '_').slice(0, 80);
-  await env.FILES.put(name, file.stream(), { httpMetadata: { contentType: file.type || 'application/octet-stream' } });
-  return Response.json({ ok: true, name });
-}
+  const name = safeName(file.name);
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  const b64 = btoa(binary);
+  const headers = { Authorization: 'Bearer ' + env.GITHUB_TOKEN, Accept: 'application/vnd.github+json', 'User-Agent': 'mdc-hub', 'Content-Type': 'application/json' };
 
-async function serveFile(name, env) {
-  if (!env.FILES) return new Response('R2 not connected', { status: 500 });
-  const obj = await env.FILES.get(decodeURIComponent(name));
-  if (!obj) return new Response('Not found', { status: 404 });
-  return new Response(obj.body, { headers: { 'content-type': obj.httpMetadata?.contentType || 'application/octet-stream' } });
+  let sha;
+  const existing = await fetch('https://api.github.com/repos/' + REPO + '/contents/files/' + encodeURIComponent(name), { headers }).then(r => r.ok ? r.json() : null);
+  if (existing) sha = existing.sha;
+  const put = await fetch('https://api.github.com/repos/' + REPO + '/contents/files/' + encodeURIComponent(name), {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify({ message: 'Add ' + name, content: b64, sha })
+  });
+  if (!put.ok) return Response.json({ error: 'Upload failed' }, { status: 500 });
+
+  const listRes = await fetch('https://api.github.com/repos/' + REPO + '/contents/files.json', { headers });
+  const listData = listRes.ok ? await listRes.json() : null;
+  const items = listData ? JSON.parse(atob(listData.content.replace(/\n/g, ''))) : [];
+  const entry = { name, file: 'https://raw.githubusercontent.com/' + REPO + '/main/files/' + encodeURIComponent(name), type: file.type || 'file', note: 'Uploaded from the site' };
+  const next = [entry, ...items.filter(item => item.name !== name)];
+  const save = await fetch('https://api.github.com/repos/' + REPO + '/contents/files.json', {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify({ message: 'Update file list', content: btoa(JSON.stringify(next, null, 2)), sha: listData && listData.sha })
+  });
+  if (!save.ok) return Response.json({ error: 'List update failed' }, { status: 500 });
+  return Response.json({ ok: true, name });
 }
 
 const html = `<!DOCTYPE html>
@@ -95,9 +129,8 @@ async function load(){
   const count=document.getElementById('count');
   try{
     const items=await fetch('/api/files').then(r=>r.json());
-    if(items.error){count.textContent=items.error;return}
     count.textContent=items.length+(items.length===1?' file':' files');
-    grid.innerHTML=items.length?items.map(item=>'<a class="card" href="'+item.file+'" target="_blank" rel="noopener"><div class="type">file</div><h3>'+item.name+'</h3><p>'+Math.ceil(item.size/1024)+' KB</p></a>').join(''):'<p class="empty">No files yet.</p>';
+    grid.innerHTML=items.length?items.map(item=>'<a class="card" href="'+item.file+'" target="_blank" rel="noopener"><div class="type">'+(item.type||'file')+'</div><h3>'+item.name+'</h3><p>'+(item.note||'Open')+'</p></a>').join(''):'<p class="empty">No files yet.</p>';
   }catch{count.textContent='Could not load files'}
 }
 document.getElementById('form').onsubmit=async e=>{
