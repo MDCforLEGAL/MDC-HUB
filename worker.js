@@ -30,17 +30,26 @@ function toBase64(bytes) {
   return btoa(binary);
 }
 
+function envValue(env, names) {
+  for (const name of names) {
+    const value = env && env[name];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+}
 async function uploadFile(request, env) {
-  if (!env.GITHUB_TOKEN) return Response.json({ error: 'GITHUB_TOKEN missing' }, { status: 500 });
-  if (!env.UPLOAD_KEY) return Response.json({ error: 'UPLOAD_KEY missing' }, { status: 500 });
+  const token = envValue(env, ['GITHUB_TOKEN', 'GH_TOKEN', 'GITHUB_PAT', 'GH_PAT', 'TOKEN']);
+  const uploadKey = envValue(env, ['UPLOAD_KEY', 'UPLOAD_PASSWORD', 'KEY']);
+  if (!token) return Response.json({ error: 'GITHUB_TOKEN missing', keys: Object.keys(env || {}) }, { status: 500 });
+  if (!uploadKey) return Response.json({ error: 'UPLOAD_KEY missing', keys: Object.keys(env || {}) }, { status: 500 });
   const form = await request.formData();
-  if (form.get('key') !== env.UPLOAD_KEY) return Response.json({ error: 'Wrong key' }, { status: 401 });
+  if (form.get('key') !== uploadKey) return Response.json({ error: 'Wrong key' }, { status: 401 });
   const file = form.get('file');
   if (!file || typeof file === 'string') return Response.json({ error: 'No file' }, { status: 400 });
   const name = safeName(file.name);
   const b64 = toBase64(new Uint8Array(await file.arrayBuffer()));
   const headers = {
-    Authorization: 'Bearer ' + env.GITHUB_TOKEN,
+    Authorization: 'Bearer ' + token,
     Accept: 'application/vnd.github+json',
     'User-Agent': 'mdc-hub',
     'Content-Type': 'application/json'
