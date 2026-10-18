@@ -29,7 +29,7 @@ async function deleteFile(item) {
   const res = await fetch('/api/delete', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ key, name: item.name })
+    body: JSON.stringify({ key, name: item.name, file: item.file })
   });
   const data = await res.json().catch(() => ({}));
   if (!data.ok) return alert(data.error || 'Delete failed');
