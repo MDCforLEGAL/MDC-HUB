@@ -60,10 +60,6 @@ function renderFiles(items) {
     grid.querySelectorAll('[data-del]').forEach(button => {
       button.onclick = () => deleteFile(items[button.dataset.del]);
     });
-  } catch {
-    count.textContent = 'Could not load files';
-    grid.innerHTML = '<p class="empty">Add files.json next to this page.</p>';
-  }
 }
 
 async function loadFiles() {
