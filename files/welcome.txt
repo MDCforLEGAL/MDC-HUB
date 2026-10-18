@@ -1,3 +1,0 @@
-MDC HUB
-Your files, public for everyone.
-Replace this file or add new ones in files.json.
