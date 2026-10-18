@@ -1,0 +1,8 @@
+[
+  {
+    "name": "Welcome",
+    "file": "files/welcome.txt",
+    "type": "text",
+    "note": "Sample file. Replace this with your own."
+  }
+]
