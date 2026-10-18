@@ -4,6 +4,38 @@ const count = document.getElementById('count');
 
 setTimeout(() => intro.classList.add('hide'), 1900);
 
+function fileUrl(item) {
+  if (!item.file) return '';
+  if (item.file.startsWith('http')) return item.file;
+  return new URL(item.file, location.href).href;
+}
+
+async function copyFile(item, button) {
+  button.textContent = 'Copying...';
+  try {
+    const res = await fetch(fileUrl(item), { cache: 'no-store' });
+    if (!res.ok) throw new Error('read failed');
+    await navigator.clipboard.writeText(await res.text());
+    button.textContent = 'Copied';
+  } catch {
+    button.textContent = 'Copy failed';
+  }
+  setTimeout(() => { button.textContent = 'Copy'; }, 1200);
+}
+
+async function deleteFile(item) {
+  const key = prompt('Enter the upload key to delete this file');
+  if (!key) return;
+  const res = await fetch('/api/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, name: item.name })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!data.ok) return alert(data.error || 'Delete failed');
+  loadFiles();
+}
+
 async function loadFiles() {
   try {
     const res = await fetch('/api/files?ts=' + Date.now(), { cache: 'no-store' });
@@ -14,12 +46,22 @@ async function loadFiles() {
       return;
     }
     grid.innerHTML = items.map((item, i) => `
-      <a class="card" href="${item.file}" style="animation-delay:${0.08 * i}s" target="_blank" rel="noopener">
+      <article class="card" style="animation-delay:${0.08 * i}s">
         <div class="type">${item.type || 'file'}</div>
         <h3>${item.name}</h3>
-        <p>${item.note || 'Open file'}</p>
-      </a>
+        <p>${item.note || 'Click copy'}</p>
+        <div class="actions">
+          <button type="button" data-copy="${i}">Copy</button>
+          <button type="button" class="danger" data-del="${i}">Delete</button>
+        </div>
+      </article>
     `).join('');
+    grid.querySelectorAll('[data-copy]').forEach(button => {
+      button.onclick = () => copyFile(items[button.dataset.copy], button);
+    });
+    grid.querySelectorAll('[data-del]').forEach(button => {
+      button.onclick = () => deleteFile(items[button.dataset.del]);
+    });
   } catch {
     count.textContent = 'Could not load files';
     grid.innerHTML = '<p class="empty">Add files.json next to this page.</p>';

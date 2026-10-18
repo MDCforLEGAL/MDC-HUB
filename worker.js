@@ -5,6 +5,7 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === '/api/files') return listFiles();
     if (url.pathname === '/api/upload' && request.method === 'POST') return uploadFile(request, env);
+    if (url.pathname === '/api/delete' && request.method === 'POST') return deleteFile(request, env);
     if (env.ASSETS) return env.ASSETS.fetch(request);
     return new Response('Not found', { status: 404 });
   }
@@ -74,7 +75,7 @@ async function uploadFile(request, env) {
     name,
     file: 'https://raw.githubusercontent.com/' + REPO + '/main/files/' + encodeURIComponent(name),
     type: file.type || 'file',
-    note: 'Uploaded from the site'
+    note: String(form.get('note') || '').trim().slice(0, 120) || 'Uploaded from the site'
   };
   const next = [entry, ...items.filter(item => item.name !== name)];
   const save = await fetch('https://api.github.com/repos/' + REPO + '/contents/files.json', {
@@ -91,4 +92,46 @@ async function uploadFile(request, env) {
     return Response.json({ error: 'List update failed', github: save.status + ' ' + detail.slice(0, 300) }, { status: 500 });
   }
   return Response.json({ ok: true, name });
+}
+
+async function deleteFile(request, env) {
+  const token = envValue(env, ['GITHUB_TOKEN', 'GH_TOKEN', 'GITHUB_PAT', 'GH_PAT', 'TOKEN']);
+  const uploadKey = envValue(env, ['UPLOAD_KEY', 'UPLOAD_PASSWORD', 'KEY']);
+  if (!token || !uploadKey) return Response.json({ error: 'Server key missing' }, { status: 500 });
+  const body = await request.json().catch(() => ({}));
+  if (body.key !== uploadKey) return Response.json({ error: 'Wrong key' }, { status: 401 });
+  const name = safeName(body.name);
+  const headers = {
+    Authorization: 'Bearer ' + token,
+    Accept: 'application/vnd.github+json',
+    'User-Agent': 'mdc-hub',
+    'Content-Type': 'application/json'
+  };
+  const existing = await fetch('https://api.github.com/repos/' + REPO + '/contents/files/' + encodeURIComponent(name), { headers });
+  if (!existing.ok) return Response.json({ error: 'File not found' }, { status: 404 });
+  const existingData = await existing.json();
+  const del = await fetch('https://api.github.com/repos/' + REPO + '/contents/files/' + encodeURIComponent(name), {
+    method: 'DELETE',
+    headers,
+    body: JSON.stringify({ message: 'Delete ' + name, sha: existingData.sha })
+  });
+  if (!del.ok) {
+    const detail = await del.text();
+    return Response.json({ error: 'Delete failed', github: del.status + ' ' + detail.slice(0, 200) }, { status: 500 });
+  }
+  const listRes = await fetch('https://api.github.com/repos/' + REPO + '/contents/files.json', { headers });
+  const listData = listRes.ok ? await listRes.json() : null;
+  const items = listData ? JSON.parse(atob(listData.content.replace(/\n/g, ''))) : [];
+  const next = items.filter(item => item.name !== name && item.name !== body.name);
+  const save = await fetch('https://api.github.com/repos/' + REPO + '/contents/files.json', {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify({
+      message: 'Remove ' + name + ' from list',
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(next, null, 2)))),
+      sha: listData && listData.sha
+    })
+  });
+  if (!save.ok) return Response.json({ error: 'Deleted file, list update failed' }, { status: 500 });
+  return Response.json({ ok: true });
 }
