@@ -6,7 +6,7 @@ setTimeout(() => intro.classList.add('hide'), 1900);
 
 async function loadFiles() {
   try {
-    const res = await fetch('files.json', { cache: 'no-store' });
+    const res = await fetch('/api/files?ts=' + Date.now(), { cache: 'no-store' });
     const items = await res.json();
     count.textContent = items.length + (items.length === 1 ? ' file' : ' files');
     if (!items.length) {

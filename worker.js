@@ -12,9 +12,9 @@ export default {
 
 async function listFiles() {
   try {
-    const res = await fetch('https://raw.githubusercontent.com/' + REPO + '/main/files.json', { headers: { 'User-Agent': 'mdc-hub' } });
+    const res = await fetch('https://raw.githubusercontent.com/' + REPO + '/main/files.json?ts=' + Date.now(), { headers: { 'User-Agent': 'mdc-hub', 'Cache-Control': 'no-cache' } });
     if (!res.ok) return Response.json([]);
-    return Response.json(await res.json());
+    return Response.json(await res.json(), { headers: { 'Cache-Control': 'no-store' } });
   } catch {
     return Response.json([]);
   }
