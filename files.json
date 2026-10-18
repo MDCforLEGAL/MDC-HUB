@@ -1,5 +1,11 @@
 [
   {
+    "name": "mdc-v3.txt",
+    "file": "https://raw.githubusercontent.com/MDCforLEGAL/MDC-HUB/main/files/mdc-v3.txt",
+    "type": "text/plain",
+    "note": "MDC HUB V3"
+  },
+  {
     "name": "mdc-v2.txt",
     "file": "https://raw.githubusercontent.com/MDCforLEGAL/MDC-HUB/main/files/mdc-v2.txt",
     "type": "text/plain",
