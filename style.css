@@ -142,3 +142,7 @@ footer { padding: 28px 7vw 40px; color: var(--muted); border-top: 1px solid var(
 .card .actions { display: flex; gap: 8px; margin-top: 12px; }
 .card button { border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink); padding: 6px 10px; font: inherit; cursor: pointer; }
 .card button.danger { color: #e7b2a8; }
+
+.discord { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg-2); }
+.discord p { margin: 0; }
+.join { padding: 10px 16px; border-radius: 999px; background: var(--accent); color: #12110f; text-decoration: none; font-weight: 700; }
