@@ -3,7 +3,7 @@ const REPO = 'MDCforLEGAL/MDC-HUB';
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === '/api/files') return listFiles();
+    if (url.pathname === '/api/files') return listFiles(env);
     if (url.pathname === '/api/upload' && request.method === 'POST') return uploadFile(request, env);
     if (url.pathname === '/api/delete' && request.method === 'POST') return deleteFile(request, env);
     if (env.ASSETS) return env.ASSETS.fetch(request);
@@ -11,13 +11,18 @@ export default {
   }
 };
 
-async function listFiles() {
+async function listFiles(env) {
   try {
-    const res = await fetch('https://raw.githubusercontent.com/' + REPO + '/main/files.json?ts=' + Date.now(), { headers: { 'User-Agent': 'mdc-hub', 'Cache-Control': 'no-cache' } });
-    if (!res.ok) return Response.json([]);
-    return Response.json(await res.json(), { headers: { 'Cache-Control': 'no-store' } });
+    const token = envValue(env, ['GITHUB_TOKEN', 'GH_TOKEN', 'GITHUB_PAT', 'GH_PAT', 'TOKEN']);
+    const headers = { Accept: 'application/vnd.github+json', 'User-Agent': 'mdc-hub' };
+    if (token) headers.Authorization = 'Bearer ' + token;
+    const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/files.json', { headers });
+    if (!res.ok) return Response.json([], { headers: { 'Cache-Control': 'no-store' } });
+    const data = await res.json();
+    const items = JSON.parse(atob(String(data.content || '').replace(/\n/g, '')));
+    return Response.json(items, { headers: { 'Cache-Control': 'no-store' } });
   } catch {
-    return Response.json([]);
+    return Response.json([], { headers: { 'Cache-Control': 'no-store' } });
   }
 }
 
@@ -134,5 +139,5 @@ async function deleteFile(request, env) {
     })
   });
   if (!save.ok) return Response.json({ error: 'Deleted file, list update failed' }, { status: 500 });
-  return Response.json({ ok: true });
+  return Response.json({ ok: true, files: next });
 }

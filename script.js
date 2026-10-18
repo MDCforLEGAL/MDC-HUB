@@ -33,13 +33,11 @@ async function deleteFile(item) {
   });
   const data = await res.json().catch(() => ({}));
   if (!data.ok) return alert(data.error || 'Delete failed');
+  if (Array.isArray(data.files)) return renderFiles(data.files);
   loadFiles();
 }
 
-async function loadFiles() {
-  try {
-    const res = await fetch('/api/files?ts=' + Date.now(), { cache: 'no-store' });
-    const items = await res.json();
+function renderFiles(items) {
     count.textContent = items.length + (items.length === 1 ? ' file' : ' files');
     if (!items.length) {
       grid.innerHTML = '<p class="empty">No files yet.</p>';
@@ -68,6 +66,16 @@ async function loadFiles() {
   }
 }
 
+async function loadFiles() {
+  try {
+    const res = await fetch('/api/files?ts=' + Date.now(), { cache: 'no-store' });
+    renderFiles(await res.json());
+  } catch {
+    count.textContent = 'Could not load files';
+    grid.innerHTML = '<p class="empty">Could not load files.</p>';
+  }
+}
+
 loadFiles();
 
 document.getElementById('form').onsubmit = async (e) => {
@@ -78,4 +86,11 @@ document.getElementById('form').onsubmit = async (e) => {
   const data = await res.json().catch(() => ({}));
   msg.textContent = data.ok ? 'Uploaded.' : 'Failed: ' + (data.error || res.status) + (data.github ? ' | ' + data.github : '');
   if (data.ok) { e.target.reset(); loadFiles(); }
+};
+
+const pop = document.getElementById('discord-pop');
+if (localStorage.getItem('mdc-pop-closed') === '1') pop.classList.add('hidden');
+document.getElementById('close-pop').onclick = () => {
+  pop.classList.add('hidden');
+  localStorage.setItem('mdc-pop-closed', '1');
 };
