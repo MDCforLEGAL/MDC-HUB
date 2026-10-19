@@ -116,3 +116,7 @@ document.getElementById('make-key').onclick = () => {
 document.getElementById('copy-key').onclick = async () => {
   await navigator.clipboard.writeText(document.getElementById('key-out').textContent);
 };
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
