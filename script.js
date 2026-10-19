@@ -10,12 +10,31 @@ function fileUrl(item) {
   return new URL(item.file, location.href).href;
 }
 
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).catch(() => copyWithBox(text));
+  }
+  return copyWithBox(text);
+}
+function copyWithBox(text) {
+  const box = document.createElement('textarea');
+  box.value = text;
+  box.setAttribute('readonly', '');
+  box.style.position = 'fixed';
+  box.style.left = '-9999px';
+  document.body.appendChild(box);
+  box.select();
+  const ok = document.execCommand('copy');
+  box.remove();
+  if (!ok) throw new Error('copy failed');
+}
 async function copyFile(item, button) {
   button.textContent = 'Copying...';
   try {
-    const res = await fetch(fileUrl(item), { cache: 'no-store' });
+    const name = decodeURIComponent(String(item.file || item.name).split('/').pop());
+    const res = await fetch('/api/raw?name=' + encodeURIComponent(name) + '&ts=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) throw new Error('read failed');
-    await navigator.clipboard.writeText(await res.text());
+    await copyText(await res.text());
     button.textContent = 'Copied';
   } catch {
     button.textContent = 'Copy failed';

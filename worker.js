@@ -4,6 +4,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/api/files') return listFiles(env);
+    if (url.pathname === '/api/raw') return rawFile(url, env);
     if (url.pathname === '/api/upload' && request.method === 'POST') return uploadFile(request, env);
     if (url.pathname === '/api/delete' && request.method === 'POST') return deleteFile(request, env);
     if (env.ASSETS) return env.ASSETS.fetch(request);
@@ -140,4 +141,17 @@ async function deleteFile(request, env) {
   });
   if (!save.ok) return Response.json({ error: 'Deleted file, list update failed' }, { status: 500 });
   return Response.json({ ok: true, files: next });
+}
+
+async function rawFile(url, env) {
+  const name = safeName(decodeURIComponent(url.searchParams.get('name') || ''));
+  if (!name) return new Response('Missing name', { status: 400 });
+  const token = envValue(env, ['GITHUB_TOKEN', 'GH_TOKEN', 'GITHUB_PAT', 'GH_PAT', 'TOKEN']);
+  const headers = { Accept: 'application/vnd.github+json', 'User-Agent': 'mdc-hub' };
+  if (token) headers.Authorization = 'Bearer ' + token;
+  const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/files/' + encodeURIComponent(name), { headers });
+  if (!res.ok) return new Response('Not found', { status: 404 });
+  const data = await res.json();
+  const text = atob(String(data.content || '').replace(/\n/g, ''));
+  return new Response(text, { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } });
 }
