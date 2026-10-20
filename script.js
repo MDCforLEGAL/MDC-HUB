@@ -1,8 +1,22 @@
 const intro = document.getElementById('intro');
+const introName = document.getElementById('intro-name');
 const grid = document.getElementById('grid');
 const count = document.getElementById('count');
 
-setTimeout(() => intro.classList.add('hide'), 1900);
+function playIntro() {
+  const brand = document.querySelector('.brand');
+  const box = brand.getBoundingClientRect();
+  introName.style.setProperty('--brand-x', box.left + 'px');
+  introName.style.setProperty('--brand-y', (box.top + box.height / 2) + 'px');
+  setTimeout(() => introName.classList.add('go'), 1700);
+  setTimeout(() => {
+    document.body.classList.remove('booting');
+    document.body.classList.add('ready');
+    intro.classList.add('hide');
+  }, 2500);
+  setTimeout(() => introName.style.display = 'none', 3200);
+}
+playIntro();
 
 function fileUrl(item) {
   if (!item.file) return '';
