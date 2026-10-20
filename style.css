@@ -150,10 +150,12 @@ h2 { margin: 0; font-size: 32px; }
   text-decoration: none;
   box-shadow: var(--shadow);
   opacity: 0;
-  transform: translateY(16px);
-  animation: fade 0.6s ease forwards;
   transition: transform 0.25s ease, border-color 0.25s ease;
 }
+.card.from-left { transform: translateX(-56px); animation: slideLeft 0.55s ease forwards; }
+.card.from-right { transform: translateX(56px); animation: slideRight 0.55s ease forwards; }
+@keyframes slideLeft { to { opacity: 1; transform: none; } }
+@keyframes slideRight { to { opacity: 1; transform: none; } }
 .card:hover { transform: translateY(-4px); border-color: rgba(215, 196, 163, 0.45); }
 .card .type { color: var(--accent); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; }
 .card h3 { margin: 10px 0 6px; font-size: 20px; }

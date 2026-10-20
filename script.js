@@ -15,10 +15,26 @@ function playTone(freq, dur, type) {
   osc.start(now);
   osc.stop(now + dur + 0.02);
 }
+function playSlide() {
+  if (audio.state === 'suspended') audio.resume();
+  const now = audio.currentTime;
+  const osc = audio.createOscillator();
+  const gain = audio.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(480, now);
+  osc.frequency.exponentialRampToValueAtTime(80, now + 0.34);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.045, now + 0.03);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.36);
+  osc.connect(gain);
+  gain.connect(audio.destination);
+  osc.start(now);
+  osc.stop(now + 0.38);
+}
 function playIntroSounds() {
   playTone(392, 0.28);
   setTimeout(() => playTone(523, 0.28), 700);
-  setTimeout(() => playTone(659, 0.36), 1700);
+  setTimeout(() => playSlide(), 1700);
 }
 document.addEventListener('pointerdown', () => {
   if (audio.state === 'suspended') audio.resume();
@@ -106,8 +122,9 @@ function renderFiles(items) {
       grid.innerHTML = '<p class="empty">No files yet.</p>';
       return;
     }
+    const wait = document.body.classList.contains('booting') ? 2500 : 0;
     grid.innerHTML = items.map((item, i) => `
-      <article class="card" style="animation-delay:${0.08 * i}s">
+      <article class="card ${i % 2 ? 'from-right' : 'from-left'}" style="animation-delay:${wait + i * 180}ms">
         <div class="type">${item.type || 'file'}</div>
         <h3>${item.name}</h3>
         <p>${item.note || 'Click copy'}</p>
@@ -123,6 +140,7 @@ function renderFiles(items) {
     grid.querySelectorAll('[data-del]').forEach(button => {
       button.onclick = () => deleteFile(items[button.dataset.del]);
     });
+    items.forEach((_, i) => setTimeout(playSlide, wait + i * 180));
 }
 
 async function loadFiles() {
