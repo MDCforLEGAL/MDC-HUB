@@ -271,3 +271,7 @@ footer { display: grid; gap: 6px; }
   25% { transform: translateX(-10px); }
   75% { transform: translateX(10px); }
 }
+
+.socials { display: grid; gap: 10px; }
+.socials a { color: var(--ink); text-decoration: none; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.socials a:hover { border-color: rgba(215, 196, 163, 0.45); }
