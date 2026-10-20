@@ -1,3 +1,32 @@
+
+const audio = new (window.AudioContext || window.webkitAudioContext)();
+function playTone(freq, dur, type) {
+  if (audio.state === 'suspended') audio.resume();
+  const now = audio.currentTime;
+  const osc = audio.createOscillator();
+  const gain = audio.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.setValueAtTime(freq, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.08, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+  osc.connect(gain);
+  gain.connect(audio.destination);
+  osc.start(now);
+  osc.stop(now + dur + 0.02);
+}
+function playIntroSounds() {
+  playTone(392, 0.28);
+  setTimeout(() => playTone(523, 0.28), 700);
+  setTimeout(() => playTone(659, 0.36), 1700);
+}
+document.addEventListener('pointerdown', () => {
+  if (audio.state === 'suspended') audio.resume();
+}, { once: true });
+document.addEventListener('click', (event) => {
+  const hit = event.target.closest('button, a, .card');
+  if (hit) playTone(540, 0.06);
+});
 const intro = document.getElementById('intro');
 const introName = document.getElementById('intro-name');
 const grid = document.getElementById('grid');
@@ -17,6 +46,7 @@ function playIntro() {
   setTimeout(() => introName.style.display = 'none', 3200);
 }
 playIntro();
+playIntroSounds();
 
 function fileUrl(item) {
   if (!item.file) return '';
@@ -137,17 +167,23 @@ document.querySelectorAll('.menu-item').forEach(button => {
 });
 document.getElementById('panel-close').onclick = () => panel.classList.remove('open');
 
-const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-function makeKey() {
-  let body = '';
-  for (let i = 0; i < 8; i++) body += chars[Math.floor(Math.random() * chars.length)];
-  return 'MDCSB-' + body;
-}
-document.getElementById('make-key').onclick = () => {
-  document.getElementById('key-out').textContent = makeKey();
-};
-document.getElementById('copy-key').onclick = async () => {
-  await navigator.clipboard.writeText(document.getElementById('key-out').textContent);
+let installEvent = null;
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  installEvent = event;
+  document.getElementById('install-msg').textContent = 'Ready to install.';
+});
+document.getElementById('install-app').onclick = async () => {
+  playTone(660, 0.08);
+  const msg = document.getElementById('install-msg');
+  if (!installEvent) {
+    msg.textContent = 'Chrome menu, then Install app or Add to Home screen.';
+    return;
+  }
+  installEvent.prompt();
+  const choice = await installEvent.userChoice;
+  installEvent = null;
+  msg.textContent = choice.outcome === 'accepted' ? 'Installed.' : 'Install cancelled.';
 };
 
 if ('serviceWorker' in navigator) {
