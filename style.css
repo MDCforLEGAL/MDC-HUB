@@ -358,3 +358,12 @@ body[data-theme="roblox"] {
 }
 body[data-theme="roblox"] .join,
 body[data-theme="roblox"] .upload button { background: #e2231a; color: #fff; }
+
+body[data-theme="mario"] { --bg: #1a2744; --bg-2: #243456; --ink: #fff; --muted: #c9d4ea; --line: rgba(255,255,255,.12); --accent: #e52521; }
+body[data-theme="sonic"] { --bg: #06233f; --bg-2: #0c3358; --ink: #f4fbff; --muted: #b7d4ea; --line: rgba(244,251,255,.12); --accent: #1c9fff; }
+body[data-theme="pokemon"] { --bg: #1c2430; --bg-2: #273140; --ink: #f7f7f2; --muted: #c5c8b8; --line: rgba(247,247,242,.12); --accent: #ffcb05; }
+body[data-theme="fortnite"] { --bg: #10141c; --bg-2: #1a2230; --ink: #f3f6ff; --muted: #aeb8cc; --line: rgba(243,246,255,.12); --accent: #7d5cff; }
+body[data-theme="amongus"] { --bg: #12151c; --bg-2: #1c2230; --ink: #f4f7ff; --muted: #b7c0d4; --line: rgba(244,247,255,.12); --accent: #c51111; }
+body[data-theme="zelda"] { --bg: #142016; --bg-2: #1d2c20; --ink: #f4f1df; --muted: #c9c3a4; --line: rgba(244,241,223,.12); --accent: #d4a017; }
+body[data-theme="geometry"] { --bg: #12081c; --bg-2: #1d102c; --ink: #f6f2ff; --muted: #c2b6d8; --line: rgba(246,242,255,.12); --accent: #00e5ff; }
+body[data-theme="brawl"] { --bg: #1a1020; --bg-2: #2a1834; --ink: #fff5fb; --muted: #d7c0cf; --line: rgba(255,245,251,.12); --accent: #ff4fa3; }

@@ -7,13 +7,29 @@ function applySettings() {
   document.body.dataset.theme = settings.theme || 'dark';
 }
 applySettings();
+const themeSounds = {
+  dark: { wave: 'sine', click: 540, intro: [392, 523], slide: 1 },
+  light: { wave: 'sine', click: 620, intro: [440, 554], slide: 0.7 },
+  blue: { wave: 'triangle', click: 500, intro: [349, 466], slide: 1 },
+  minecraft: { wave: 'square', click: 392, intro: [349, 440], slide: 0.6 },
+  roblox: { wave: 'square', click: 330, intro: [262, 330], slide: 0.8 },
+  mario: { wave: 'square', click: 988, intro: [660, 880], slide: 0.5 },
+  sonic: { wave: 'square', click: 1175, intro: [784, 1047], slide: 0.7 },
+  pokemon: { wave: 'triangle', click: 740, intro: [523, 659], slide: 0.8 },
+  fortnite: { wave: 'sawtooth', click: 220, intro: [196, 247], slide: 1.1 },
+  amongus: { wave: 'sine', click: 466, intro: [392, 494], slide: 0.9 },
+  zelda: { wave: 'triangle', click: 784, intro: [523, 659], slide: 0.7 },
+  geometry: { wave: 'square', click: 880, intro: [440, 880], slide: 1.3 },
+  brawl: { wave: 'triangle', click: 698, intro: [523, 784], slide: 0.8 }
+};
+function soundPack() { return themeSounds[settings.theme] || themeSounds.dark; }
 function playTone(freq, dur, type) {
   if (!settings.sound) return;
   if (audio.state === 'suspended') audio.resume();
   const now = audio.currentTime;
   const osc = audio.createOscillator();
   const gain = audio.createGain();
-  osc.type = type || 'sine';
+  osc.type = type || soundPack().wave;
   osc.frequency.setValueAtTime(freq, now);
   gain.gain.setValueAtTime(0.0001, now);
   gain.gain.exponentialRampToValueAtTime(0.025, now + 0.03);
@@ -26,6 +42,7 @@ function playTone(freq, dur, type) {
 function playSlide() {
   if (!settings.sound) return;
   if (audio.state === 'suspended') audio.resume();
+  const pack = soundPack();
   const now = audio.currentTime;
   const len = audio.sampleRate * 0.45;
   const buffer = audio.createBuffer(1, len, audio.sampleRate);
@@ -35,7 +52,7 @@ function playSlide() {
   noise.buffer = buffer;
   const filter = audio.createBiquadFilter();
   filter.type = 'bandpass';
-  filter.frequency.setValueAtTime(400, now);
+  filter.frequency.setValueAtTime(280 * pack.slide, now);
   filter.frequency.exponentialRampToValueAtTime(1400, now + 0.16);
   filter.frequency.exponentialRampToValueAtTime(280, now + 0.42);
   filter.Q.value = 0.7;
@@ -54,8 +71,9 @@ function playBlink() {
   setTimeout(() => playTone(520, 0.08), 70);
 }
 function playIntroSounds() {
-  playTone(392, 0.28);
-  setTimeout(() => playTone(523, 0.28), 700);
+  const introPack = soundPack();
+  playTone(introPack.intro[0], 0.28);
+  setTimeout(() => playTone(introPack.intro[1], 0.28), 700);
   setTimeout(() => playSlide(), 1700);
   setTimeout(playBlink, 3200);
 }
@@ -64,7 +82,7 @@ document.addEventListener('pointerdown', () => {
 }, { once: true });
 document.addEventListener('click', (event) => {
   const hit = event.target.closest('button, a, .card');
-  if (hit) playTone(540, 0.06);
+  if (hit) playTone(soundPack().click, 0.06);
 });
 const intro = document.getElementById('intro');
 const introName = document.getElementById('intro-name');
