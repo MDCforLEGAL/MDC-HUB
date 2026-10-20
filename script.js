@@ -18,18 +18,27 @@ function playTone(freq, dur, type) {
 function playSlide() {
   if (audio.state === 'suspended') audio.resume();
   const now = audio.currentTime;
-  const osc = audio.createOscillator();
+  const len = audio.sampleRate * 0.45;
+  const buffer = audio.createBuffer(1, len, audio.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+  const noise = audio.createBufferSource();
+  noise.buffer = buffer;
+  const filter = audio.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.setValueAtTime(400, now);
+  filter.frequency.exponentialRampToValueAtTime(1400, now + 0.16);
+  filter.frequency.exponentialRampToValueAtTime(280, now + 0.42);
+  filter.Q.value = 0.7;
   const gain = audio.createGain();
-  osc.type = 'sawtooth';
-  osc.frequency.setValueAtTime(480, now);
-  osc.frequency.exponentialRampToValueAtTime(80, now + 0.34);
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.045, now + 0.03);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.36);
-  osc.connect(gain);
+  gain.gain.exponentialRampToValueAtTime(0.22, now + 0.08);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+  noise.connect(filter);
+  filter.connect(gain);
   gain.connect(audio.destination);
-  osc.start(now);
-  osc.stop(now + 0.38);
+  noise.start(now);
+  noise.stop(now + 0.45);
 }
 function playIntroSounds() {
   playTone(392, 0.28);
