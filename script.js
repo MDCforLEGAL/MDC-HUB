@@ -226,3 +226,19 @@ document.addEventListener('wheel', (event) => {
   if (event.ctrlKey) event.preventDefault();
 }, { passive: false });
 document.addEventListener('gesturestart', (event) => event.preventDefault());
+
+let spam = 0;
+let spamTimer;
+document.querySelector('.brand').addEventListener('click', (event) => {
+  event.preventDefault();
+  spam += 1;
+  clearTimeout(spamTimer);
+  spamTimer = setTimeout(() => { spam = 0; }, 1500);
+  if (spam < 8) return;
+  spam = 0;
+  const scare = document.getElementById('scare');
+  scare.classList.add('show');
+  playTone(90, 0.18, 'sawtooth');
+  setTimeout(() => playTone(180, 0.12, 'square'), 80);
+  setTimeout(() => scare.classList.remove('show'), 900);
+});

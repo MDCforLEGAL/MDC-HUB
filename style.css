@@ -248,3 +248,26 @@ footer { padding: 28px 7vw 40px; color: var(--muted); border-top: 1px solid var(
 }
 
 input, textarea, .key-out { -webkit-user-select: text; user-select: text; }
+
+footer { display: grid; gap: 6px; }
+.copy { font-size: 13px; }
+.scare {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: none;
+  place-items: center;
+  align-content: center;
+  background: #3a0000;
+  color: #fff;
+  text-align: center;
+}
+.scare.show { display: grid; animation: scareIn 0.08s linear; }
+.scare-face { font-size: 120px; animation: shake 0.12s linear 6; }
+.scare p { margin: 0; font-size: 42px; font-weight: 800; letter-spacing: 0.08em; }
+@keyframes scareIn { from { transform: scale(1.4); } to { transform: none; } }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
