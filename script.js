@@ -185,16 +185,20 @@ document.getElementById('close-pop').onclick = () => {
 
 const menu = document.getElementById('menu');
 const panel = document.getElementById('panel');
-document.getElementById('menu-btn').onclick = () => {
-  menu.classList.toggle('open');
-  if (!menu.classList.contains('open')) panel.classList.remove('open');
+const menuBtn = document.getElementById('menu-btn');
+menuBtn.onclick = () => {
+  const open = menu.classList.toggle('open');
+  menuBtn.classList.toggle('open', open);
+  if (!open) panel.classList.remove('open');
 };
 document.querySelectorAll('.menu-item').forEach(button => {
   button.onclick = () => {
     document.querySelectorAll('.panel-page').forEach(page => page.classList.remove('active'));
     document.getElementById(button.dataset.panel).classList.add('active');
-    panel.classList.add('open');
     menu.classList.remove('open');
+    menuBtn.classList.remove('open');
+    panel.classList.remove('open');
+    requestAnimationFrame(() => panel.classList.add('open'));
   };
 });
 document.getElementById('panel-close').onclick = () => panel.classList.remove('open');
