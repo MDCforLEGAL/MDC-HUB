@@ -1,6 +1,14 @@
 
 const audio = new (window.AudioContext || window.webkitAudioContext)();
+const settings = JSON.parse(localStorage.getItem('mdc-settings') || '{"fx":true,"sound":true,"theme":"dark"}');
+function saveSettings() { localStorage.setItem('mdc-settings', JSON.stringify(settings)); }
+function applySettings() {
+  document.body.classList.toggle('no-fx', !settings.fx);
+  document.body.dataset.theme = settings.theme || 'dark';
+}
+applySettings();
 function playTone(freq, dur, type) {
+  if (!settings.sound) return;
   if (audio.state === 'suspended') audio.resume();
   const now = audio.currentTime;
   const osc = audio.createOscillator();
@@ -16,6 +24,7 @@ function playTone(freq, dur, type) {
   osc.stop(now + dur + 0.02);
 }
 function playSlide() {
+  if (!settings.sound) return;
   if (audio.state === 'suspended') audio.resume();
   const now = audio.currentTime;
   const len = audio.sampleRate * 0.45;
@@ -246,3 +255,13 @@ document.querySelector('.brand').addEventListener('click', (event) => {
   setTimeout(() => playTone(180, 0.12, 'square'), 80);
   setTimeout(() => scare.classList.remove('show'), 900);
 });
+
+const fxToggle = document.getElementById('fx-toggle');
+const soundToggle = document.getElementById('sound-toggle');
+const themeSelect = document.getElementById('theme-select');
+fxToggle.checked = settings.fx !== false;
+soundToggle.checked = settings.sound !== false;
+themeSelect.value = settings.theme || 'dark';
+fxToggle.onchange = () => { settings.fx = fxToggle.checked; saveSettings(); applySettings(); };
+soundToggle.onchange = () => { settings.sound = soundToggle.checked; saveSettings(); };
+themeSelect.onchange = () => { settings.theme = themeSelect.value; saveSettings(); applySettings(); };
