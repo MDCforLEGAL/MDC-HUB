@@ -20,7 +20,8 @@ const themeSounds = {
   amongus: { wave: 'sine', click: 466, intro: [392, 494], slide: 0.9 },
   zelda: { wave: 'triangle', click: 784, intro: [523, 659], slide: 0.7 },
   geometry: { wave: 'square', click: 880, intro: [440, 880], slide: 1.3 },
-  brawl: { wave: 'triangle', click: 698, intro: [523, 784], slide: 0.8 }
+  brawl: { wave: 'triangle', click: 698, intro: [523, 784], slide: 0.8 },
+  glitch: { wave: 'sawtooth', click: 140, intro: [90, 880], slide: 1.6 }
 };
 function soundPack() { return themeSounds[settings.theme] || themeSounds.dark; }
 function playTone(freq, dur, type) {
@@ -283,10 +284,43 @@ document.querySelector('.brand').addEventListener('click', (event) => {
 
 const fxToggle = document.getElementById('fx-toggle');
 const soundToggle = document.getElementById('sound-toggle');
-const themeSelect = document.getElementById('theme-select');
 fxToggle.checked = settings.fx !== false;
 soundToggle.checked = settings.sound !== false;
-themeSelect.value = settings.theme || 'dark';
 fxToggle.onchange = () => { settings.fx = fxToggle.checked; saveSettings(); applySettings(); };
 soundToggle.onchange = () => { settings.sound = soundToggle.checked; saveSettings(); };
-themeSelect.onchange = () => { settings.theme = themeSelect.value; saveSettings(); applySettings(); };
+const themeBtn = document.getElementById('theme-btn');
+const themePicker = document.getElementById('theme-picker');
+const themeList = document.getElementById('theme-list');
+const glitchOpt = themeList.querySelector('[data-theme="glitch"]');
+if (settings.glitch) glitchOpt.hidden = false;
+function themeLabel(value) {
+  const btn = themeList.querySelector('[data-theme="' + value + '"]');
+  return btn ? btn.textContent : 'Dark';
+}
+function setTheme(value) {
+  settings.theme = value;
+  saveSettings();
+  applySettings();
+  themeBtn.textContent = themeLabel(value);
+  themeList.querySelectorAll('button').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === value));
+}
+setTheme(settings.theme || 'dark');
+let themeFlips = 0;
+themeBtn.onclick = () => {
+  const open = themePicker.classList.toggle('open');
+  if (!open) {
+    themeFlips += 1;
+    if (themeFlips >= 5 && !settings.glitch) {
+      settings.glitch = true;
+      saveSettings();
+      glitchOpt.hidden = false;
+      setTheme('glitch');
+    }
+  }
+};
+themeList.querySelectorAll('button').forEach(btn => {
+  btn.onclick = () => {
+    setTheme(btn.dataset.theme);
+    themePicker.classList.remove('open');
+  };
+});

@@ -64,23 +64,28 @@
       <h2>Settings</h2>
       <label class="setting"><span>Effects</span><input id="fx-toggle" type="checkbox" checked></label>
       <label class="setting"><span>Sounds</span><input id="sound-toggle" type="checkbox" checked></label>
-      <label class="setting"><span>Theme</span>
-        <select id="theme-select">
-          <option value="dark">Dark</option>
-          <option value="light">Light</option>
-          <option value="blue">Blue</option>
-          <option value="minecraft">Minecraft</option>
-          <option value="roblox">Roblox</option>
-          <option value="mario">Mario</option>
-          <option value="sonic">Sonic</option>
-          <option value="pokemon">Pokemon</option>
-          <option value="fortnite">Fortnite</option>
-          <option value="amongus">Among Us</option>
-          <option value="zelda">Zelda</option>
-          <option value="geometry">Geometry Dash</option>
-          <option value="brawl">Brawl Stars</option>
-        </select>
-      </label>
+      <div class="setting theme-setting">
+        <span>Theme</span>
+        <div class="picker" id="theme-picker">
+          <button type="button" class="picker-btn" id="theme-btn">Dark</button>
+          <div class="picker-list" id="theme-list">
+            <button type="button" data-theme="dark">Dark</button>
+            <button type="button" data-theme="light">Light</button>
+            <button type="button" data-theme="blue">Blue</button>
+            <button type="button" data-theme="minecraft">Minecraft</button>
+            <button type="button" data-theme="roblox">Roblox</button>
+            <button type="button" data-theme="mario">Mario</button>
+            <button type="button" data-theme="sonic">Sonic</button>
+            <button type="button" data-theme="pokemon">Pokemon</button>
+            <button type="button" data-theme="fortnite">Fortnite</button>
+            <button type="button" data-theme="amongus">Among Us</button>
+            <button type="button" data-theme="zelda">Zelda</button>
+            <button type="button" data-theme="geometry">Geometry Dash</button>
+            <button type="button" data-theme="brawl">Brawl Stars</button>
+            <button type="button" data-theme="glitch" class="glitch-opt" hidden>Glitch</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
