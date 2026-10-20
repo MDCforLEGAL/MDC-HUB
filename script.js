@@ -8,7 +8,7 @@ function playTone(freq, dur, type) {
   osc.type = type || 'sine';
   osc.frequency.setValueAtTime(freq, now);
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.08, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.025, now + 0.03);
   gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
   osc.connect(gain);
   gain.connect(audio.destination);
@@ -32,7 +32,7 @@ function playSlide() {
   filter.Q.value = 0.7;
   const gain = audio.createGain();
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.22, now + 0.08);
+  gain.gain.exponentialRampToValueAtTime(0.055, now + 0.1);
   gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
   noise.connect(filter);
   filter.connect(gain);
@@ -216,3 +216,8 @@ document.getElementById('install-app').onclick = async () => {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js');
 }
+
+document.addEventListener('wheel', (event) => {
+  if (event.ctrlKey) event.preventDefault();
+}, { passive: false });
+document.addEventListener('gesturestart', (event) => event.preventDefault());

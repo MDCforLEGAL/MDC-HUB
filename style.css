@@ -11,6 +11,7 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
+  touch-action: manipulation;
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
