@@ -40,10 +40,15 @@ function playSlide() {
   noise.start(now);
   noise.stop(now + 0.45);
 }
+function playBlink() {
+  playTone(880, 0.05);
+  setTimeout(() => playTone(520, 0.08), 70);
+}
 function playIntroSounds() {
   playTone(392, 0.28);
   setTimeout(() => playTone(523, 0.28), 700);
   setTimeout(() => playSlide(), 1700);
+  setTimeout(playBlink, 3200);
 }
 document.addEventListener('pointerdown', () => {
   if (audio.state === 'suspended') audio.resume();
