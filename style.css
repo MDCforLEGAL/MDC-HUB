@@ -305,5 +305,56 @@ footer { display: grid; gap: 6px; }
 .setting { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
 .setting select, .setting input { accent-color: var(--accent); }
 body.no-fx *, body.no-fx *::before, body.no-fx *::after { animation: none !important; transition: none !important; }
-body[data-theme="light"] { --bg: #f6f1e8; --bg-2: #fff; --ink: #1c1915; --muted: #6d655b; --line: rgba(28,25,21,.12); --accent: #8a6a3b; }
+body.no-fx .card,
+body.no-fx .menu-item,
+body.no-fx .intro-name .word,
+body.no-fx main,
+body.no-fx footer,
+body.no-fx .discord-pop,
+body.no-fx .brand,
+body.no-fx .panel.open,
+body.no-fx .panel-page.active,
+body.no-fx .panel-page.active * {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+body.no-fx .intro { display: none !important; }
+body[data-theme="light"] {
+  --bg: #f4efe6;
+  --bg-2: #fffdf8;
+  --ink: #1a1612;
+  --muted: #5e564c;
+  --line: rgba(26, 22, 18, 0.14);
+  --accent: #8d6230;
+  --shadow: 0 12px 30px rgba(60, 40, 10, 0.08);
+}
+body[data-theme="light"] .top,
+body[data-theme="light"] .discord-pop,
+body[data-theme="light"] .menu,
+body[data-theme="light"] .panel { background: rgba(255, 253, 248, 0.94); }
+body[data-theme="light"] .upload button,
+body[data-theme="light"] .join { color: #fffdf8; }
 body[data-theme="blue"] { --bg: #0d1520; --bg-2: #152033; --ink: #e8eef8; --muted: #9aabc2; --line: rgba(232,238,248,.12); --accent: #7eb6ff; }
+body[data-theme="minecraft"] {
+  --bg: #1d2a16;
+  --bg-2: #31441f;
+  --ink: #f3f7df;
+  --muted: #c5d39a;
+  --line: rgba(243, 247, 223, 0.16);
+  --accent: #7cb342;
+  --shadow: 0 12px 0 rgba(0, 0, 0, 0.18);
+}
+body[data-theme="minecraft"] .card,
+body[data-theme="minecraft"] .menu,
+body[data-theme="minecraft"] .panel { border-radius: 4px; }
+body[data-theme="roblox"] {
+  --bg: #111214;
+  --bg-2: #1b1d20;
+  --ink: #f4f4f4;
+  --muted: #b7b7b7;
+  --line: rgba(244, 244, 244, 0.12);
+  --accent: #e2231a;
+}
+body[data-theme="roblox"] .join,
+body[data-theme="roblox"] .upload button { background: #e2231a; color: #fff; }

@@ -72,6 +72,13 @@ const grid = document.getElementById('grid');
 const count = document.getElementById('count');
 
 function playIntro() {
+  if (!settings.fx) {
+    document.body.classList.remove('booting');
+    document.body.classList.add('ready');
+    intro.classList.add('hide');
+    introName.style.display = 'none';
+    return;
+  }
   const brand = document.querySelector('.brand');
   const box = brand.getBoundingClientRect();
   introName.style.setProperty('--brand-x', box.left + 'px');
