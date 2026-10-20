@@ -31,6 +31,7 @@ body {
   transition: background 0.6s ease, opacity 0.5s ease 0.9s, visibility 0.5s ease 0.9s;
   pointer-events: none;
 }
+.intro.move { background: transparent; }
 .intro.hide { opacity: 0; visibility: hidden; }
 .intro-name {
   position: fixed;

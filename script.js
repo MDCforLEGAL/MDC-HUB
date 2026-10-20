@@ -7,8 +7,8 @@ function playIntro() {
   const brand = document.querySelector('.brand');
   const box = brand.getBoundingClientRect();
   introName.style.setProperty('--brand-x', box.left + 'px');
-  introName.style.setProperty('--brand-y', (box.top + box.height / 2) + 'px');
-  setTimeout(() => introName.classList.add('go'), 1700);
+  introName.style.setProperty('--brand-y', box.top + 'px');
+  setTimeout(() => { intro.classList.add('move'); introName.classList.add('go'); }, 1700);
   setTimeout(() => {
     document.body.classList.remove('booting');
     document.body.classList.add('ready');
