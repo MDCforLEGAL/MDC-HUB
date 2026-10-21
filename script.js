@@ -81,9 +81,79 @@ function playIntroSounds() {
 document.addEventListener('pointerdown', () => {
   if (audio.state === 'suspended') audio.resume();
 }, { once: true });
+function note(freq, at, dur, type) {
+  if (!settings.sound) return;
+  if (audio.state === 'suspended') audio.resume();
+  const now = audio.currentTime + at;
+  const osc = audio.createOscillator();
+  const gain = audio.createGain();
+  osc.type = type || 'square';
+  osc.frequency.setValueAtTime(freq, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.03, now + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+  osc.connect(gain);
+  gain.connect(audio.destination);
+  osc.start(now);
+  osc.stop(now + dur + 0.02);
+}
+function creak() {
+  if (!settings.sound) return;
+  const now = audio.currentTime;
+  const len = audio.sampleRate * 0.35;
+  const buffer = audio.createBuffer(1, len, audio.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+  const src = audio.createBufferSource();
+  src.buffer = buffer;
+  const filter = audio.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.setValueAtTime(180, now);
+  filter.frequency.exponentialRampToValueAtTime(900, now + 0.22);
+  filter.Q.value = 4;
+  const gain = audio.createGain();
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.08, now + 0.04);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
+  src.connect(filter);
+  filter.connect(gain);
+  gain.connect(audio.destination);
+  src.start(now);
+  src.stop(now + 0.35);
+}
+function playThemeOpen() {
+  const theme = settings.theme || 'dark';
+  if (theme === 'minecraft') { creak(); note(196, 0, 0.12, 'square'); return; }
+  if (theme === 'roblox') { note(240, 0, 0.08, 'sawtooth'); note(160, 0.08, 0.14, 'sawtooth'); return; }
+  if (theme === 'mario') { note(988, 0, 0.08, 'square'); note(1319, 0.08, 0.16, 'square'); return; }
+  if (theme === 'sonic') { note(1175, 0, 0.1, 'sine'); note(1568, 0.08, 0.14, 'sine'); return; }
+  if (theme === 'pokemon') { note(523, 0, 0.08, 'triangle'); note(659, 0.08, 0.08, 'triangle'); note(784, 0.16, 0.12, 'triangle'); return; }
+  if (theme === 'fortnite') { creak(); note(880, 0.05, 0.12, 'sine'); return; }
+  if (theme === 'amongus') { note(466, 0, 0.1, 'sine'); note(587, 0.1, 0.12, 'sine'); return; }
+  if (theme === 'zelda') { note(523, 0, 0.1, 'triangle'); note(659, 0.1, 0.1, 'triangle'); note(784, 0.2, 0.1, 'triangle'); note(1046, 0.3, 0.18, 'triangle'); return; }
+  if (theme === 'geometry') { note(880, 0, 0.05, 'square'); note(440, 0.05, 0.08, 'square'); return; }
+  if (theme === 'brawl') { note(698, 0, 0.08, 'triangle'); note(880, 0.07, 0.1, 'triangle'); return; }
+  if (theme === 'glitch') { note(90, 0, 0.08, 'sawtooth'); note(700, 0.06, 0.05, 'square'); return; }
+  playTone(soundPack().click, 0.08);
+}
+function playThemeClick() {
+  const theme = settings.theme || 'dark';
+  if (theme === 'minecraft') { note(349, 0, 0.06, 'square'); return; }
+  if (theme === 'roblox') { note(330, 0, 0.06, 'square'); return; }
+  if (theme === 'mario') { note(784, 0, 0.05, 'square'); return; }
+  if (theme === 'sonic') { note(1047, 0, 0.05, 'sine'); return; }
+  if (theme === 'pokemon') { note(659, 0, 0.06, 'triangle'); return; }
+  if (theme === 'fortnite') { note(520, 0, 0.05, 'sine'); return; }
+  if (theme === 'amongus') { note(494, 0, 0.06, 'sine'); return; }
+  if (theme === 'zelda') { note(784, 0, 0.06, 'triangle'); return; }
+  if (theme === 'geometry') { note(880, 0, 0.04, 'square'); return; }
+  if (theme === 'brawl') { note(740, 0, 0.05, 'triangle'); return; }
+  playTone(soundPack().click, 0.06);
+}
 document.addEventListener('click', (event) => {
   const hit = event.target.closest('button, a, .card');
-  if (hit) playTone(soundPack().click, 0.06);
+  if (!hit || hit.id === 'menu-btn') return;
+  playThemeClick();
 });
 const intro = document.getElementById('intro');
 const introName = document.getElementById('intro-name');
@@ -224,6 +294,7 @@ const menuBtn = document.getElementById('menu-btn');
 menuBtn.onclick = () => {
   const open = menu.classList.toggle('open');
   menuBtn.classList.toggle('open', open);
+  if (open) playThemeOpen();
   if (!open) panel.classList.remove('open');
 };
 document.querySelectorAll('.menu-item').forEach(button => {
