@@ -4,6 +4,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/api/files') return listFiles(env);
+    if (url.pathname === '/api/status') return publicStatus();
     if (url.pathname === '/api/raw') return rawFile(url, env);
     if (url.pathname === '/api/upload' && request.method === 'POST') return uploadFile(request, env);
     if (url.pathname === '/api/delete' && request.method === 'POST') return deleteFile(request, env);
@@ -154,4 +155,13 @@ async function rawFile(url, env) {
   const data = await res.json();
   const text = atob(String(data.content || '').replace(/\n/g, ''));
   return new Response(text, { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } });
+}
+
+async function publicStatus() {
+  let bot = 'offline';
+  try {
+    const res = await fetch('https://ufdlpho6fv.apps.bot-hosting.cloud', { method: 'GET' });
+    bot = res.ok ? 'online' : 'offline';
+  } catch {}
+  return Response.json({ site: 'online', bot }, { headers: { 'Cache-Control': 'no-store' } });
 }

@@ -21,9 +21,12 @@
 
   <header class="top">
     <a class="brand" href="#top">MDC HUB</a>
-    <button class="menu-btn" id="menu-btn" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="top-actions">
+      <button class="status-btn" id="status-btn" aria-label="Status">Status <span class="dot">🟢</span></button>
+      <button class="menu-btn" id="menu-btn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </header>
 
   <aside class="menu" id="menu">
@@ -31,10 +34,14 @@
     <button class="menu-item from-right" data-panel="upload">Upload file</button>
     <button class="menu-item from-left" data-panel="socials">Socials</button>
     <button class="menu-item from-right" data-panel="settings">Settings</button>
+    <button class="menu-item from-left" data-panel="status">Status</button>
   </aside>
 
   <section class="panel" id="panel">
-    <button class="panel-close" id="panel-close">Close</button>
+    <div class="panel-nav">
+      <button class="panel-back" id="panel-back">Back</button>
+      <button class="panel-close" id="panel-close">Close</button>
+    </div>
     <div class="panel-page" id="install">
       <h2>Install app</h2>
       <p>Add MDC HUB to Chrome like an app.</p>
@@ -86,6 +93,10 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="panel-page" id="status">
+      <h2>Status</h2>
+      <div class="status-list" id="status-list">Checking...</div>
     </div>
   </section>
 

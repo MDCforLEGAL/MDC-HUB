@@ -301,6 +301,7 @@ document.querySelectorAll('.menu-item').forEach(button => {
   button.onclick = () => {
     document.querySelectorAll('.panel-page').forEach(page => page.classList.remove('active'));
     document.getElementById(button.dataset.panel).classList.add('active');
+    if (button.dataset.panel === 'status') loadStatus();
     menu.classList.remove('open');
     menuBtn.classList.remove('open');
     panel.classList.remove('open');
@@ -308,6 +309,36 @@ document.querySelectorAll('.menu-item').forEach(button => {
   };
 });
 document.getElementById('panel-close').onclick = () => panel.classList.remove('open');
+document.getElementById('panel-back').onclick = () => {
+  panel.classList.remove('open');
+  menu.classList.add('open');
+  menuBtn.classList.add('open');
+};
+async function loadStatus() {
+  const box = document.getElementById('status-list');
+  box.textContent = 'Checking...';
+  const started = performance.now();
+  let data = { site: 'online', bot: 'unknown' };
+  try {
+    const res = await fetch('/api/status?ts=' + Date.now(), { cache: 'no-store' });
+    data = await res.json();
+  } catch {}
+  const ms = Math.round(performance.now() - started);
+  box.innerHTML = [
+    ['Site', data.site || 'online'],
+    ['Bot', data.bot || 'unknown'],
+    ['Response', ms + ' ms']
+  ].map(row => '<div class="status-row"><span>' + row[0] + '</span><strong>' + row[1] + '</strong></div>').join('');
+  document.querySelector('.dot').textContent = data.bot === 'online' ? '🟢' : '🔴';
+}
+document.getElementById('status-btn').onclick = () => {
+  document.querySelectorAll('.panel-page').forEach(page => page.classList.remove('active'));
+  document.getElementById('status').classList.add('active');
+  menu.classList.remove('open');
+  menuBtn.classList.remove('open');
+  panel.classList.add('open');
+  loadStatus();
+};
 
 let installEvent = null;
 window.addEventListener('beforeinstallprompt', (event) => {

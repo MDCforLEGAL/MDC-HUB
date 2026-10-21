@@ -411,3 +411,9 @@ body[data-theme="glitch"] h3 {
   100% { transform: none; }
 }
 .card { content-visibility: auto; contain-intrinsic-size: 140px; }
+
+.top-actions { display: flex; align-items: center; gap: 8px; }
+.status-btn, .panel-back, .panel-close { border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 12px; padding: 10px 12px; font: inherit; cursor: pointer; }
+.panel-nav { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.status-list { display: grid; gap: 10px; }
+.status-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
