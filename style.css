@@ -157,8 +157,14 @@ h2 { margin: 0; font-size: 32px; }
   opacity: 0;
   transition: transform 0.25s ease, border-color 0.25s ease;
 }
-.card.from-left { transform: translateX(-56px); animation: slideLeft 0.55s ease forwards; }
-.card.from-right { transform: translateX(56px); animation: slideRight 0.55s ease forwards; }
+.card.from-left { transform: translateX(-56px); animation-name: slideLeft; }
+.card.from-right { transform: translateX(56px); animation-name: slideRight; }
+.card.from-left, .card.from-right {
+  animation-duration: 0.55s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  content-visibility: visible;
+}
 @keyframes slideLeft { to { opacity: 1; transform: none; } }
 @keyframes slideRight { to { opacity: 1; transform: none; } }
 .card:hover { transform: translateY(-4px); border-color: rgba(215, 196, 163, 0.45); }
@@ -386,8 +392,7 @@ body[data-theme="zelda"] .card, body[data-theme="zelda"] .panel, body[data-theme
 
 body[data-theme="geometry"] { --bg:#12081c; --bg-2:#1d102c; --ink:#f6f2ff; --muted:#c2b6d8; --line:rgba(246,242,255,.14); --accent:#00e5ff; --btn:#081018; }
 body[data-theme="geometry"] { background: linear-gradient(135deg, #1a0a28, #12081c 40%, #0a1a28); }
-body[data-theme="geometry"] .card { border-left: 4px solid #00e5ff; transform: skewX(-2deg); }
-body[data-theme="geometry"] .card h3, body[data-theme="geometry"] .card p { transform: skewX(2deg); }
+body[data-theme="geometry"] .card { border-left: 4px solid #00e5ff; }
 
 body[data-theme="brawl"] { --bg:#1a1020; --bg-2:#2a1834; --ink:#fff5fb; --muted:#d7c0cf; --line:rgba(255,245,251,.14); --accent:#ff4fa3; --btn:#1a1020; }
 body[data-theme="brawl"] { background: radial-gradient(700px 420px at 80% 0%, rgba(255,79,163,.22), transparent 55%), #1a1020; }
@@ -419,7 +424,6 @@ body[data-theme="glitch"] .brand, body[data-theme="glitch"] h2, body[data-theme=
   92% { transform: translate(1px, 0); }
 }
 
-.card { content-visibility: auto; contain-intrinsic-size: 140px; }
 
 .top-actions { display: flex; align-items: center; gap: 8px; }
 .status-btn, .panel-back, .panel-close { border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 12px; padding: 10px 12px; font: inherit; cursor: pointer; }
