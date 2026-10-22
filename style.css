@@ -320,173 +320,105 @@ body.no-fx .panel-page.active * {
   visibility: visible !important;
 }
 body.no-fx .intro { display: none !important; }
-body[data-theme="light"] {
-  --bg: #f4efe6;
-  --bg-2: #fffdf8;
-  --ink: #1a1612;
-  --muted: #5e564c;
-  --line: rgba(26, 22, 18, 0.14);
-  --accent: #8d6230;
-  --shadow: 0 12px 30px rgba(60, 40, 10, 0.08);
-}
-body[data-theme="light"] .top,
-body[data-theme="light"] .discord-pop,
-body[data-theme="light"] .menu,
-body[data-theme="light"] .panel { background: rgba(255, 253, 248, 0.94); }
-body[data-theme="light"] .upload button,
-body[data-theme="light"] .join { color: #fffdf8; }
-body[data-theme="blue"] { --bg: #0d1520; --bg-2: #152033; --ink: #e8eef8; --muted: #9aabc2; --line: rgba(232,238,248,.12); --accent: #7eb6ff; }
-body[data-theme="minecraft"] {
-  --bg: #1d2a16;
-  --bg-2: #31441f;
-  --ink: #f3f7df;
-  --muted: #c5d39a;
-  --line: rgba(243, 247, 223, 0.16);
-  --accent: #7cb342;
-  --shadow: 0 12px 0 rgba(0, 0, 0, 0.18);
-}
-body[data-theme="minecraft"] .card,
-body[data-theme="minecraft"] .menu,
-body[data-theme="minecraft"] .panel { border-radius: 4px; }
-body[data-theme="roblox"] {
-  --bg: #111214;
-  --bg-2: #1b1d20;
-  --ink: #f4f4f4;
-  --muted: #b7b7b7;
-  --line: rgba(244, 244, 244, 0.12);
-  --accent: #e2231a;
-}
-body[data-theme="roblox"] .join,
-body[data-theme="roblox"] .upload button { background: #e2231a; color: #fff; }
 
-body[data-theme="mario"] { --bg: #1a2744; --bg-2: #243456; --ink: #fff; --muted: #c9d4ea; --line: rgba(255,255,255,.12); --accent: #e52521; }
-body[data-theme="sonic"] { --bg: #06233f; --bg-2: #0c3358; --ink: #f4fbff; --muted: #b7d4ea; --line: rgba(244,251,255,.12); --accent: #1c9fff; }
-body[data-theme="pokemon"] { --bg: #1c2430; --bg-2: #273140; --ink: #f7f7f2; --muted: #c5c8b8; --line: rgba(247,247,242,.12); --accent: #ffcb05; }
-body[data-theme="fortnite"] { --bg: #10141c; --bg-2: #1a2230; --ink: #f3f6ff; --muted: #aeb8cc; --line: rgba(243,246,255,.12); --accent: #7d5cff; }
-body[data-theme="amongus"] { --bg: #12151c; --bg-2: #1c2230; --ink: #f4f7ff; --muted: #b7c0d4; --line: rgba(244,247,255,.12); --accent: #c51111; }
-body[data-theme="zelda"] { --bg: #142016; --bg-2: #1d2c20; --ink: #f4f1df; --muted: #c9c3a4; --line: rgba(244,241,223,.12); --accent: #d4a017; }
-body[data-theme="geometry"] { --bg: #12081c; --bg-2: #1d102c; --ink: #f6f2ff; --muted: #c2b6d8; --line: rgba(246,242,255,.12); --accent: #00e5ff; }
-body[data-theme="brawl"] { --bg: #1a1020; --bg-2: #2a1834; --ink: #fff5fb; --muted: #d7c0cf; --line: rgba(255,245,251,.12); --accent: #ff4fa3; }
-
-.picker { position: relative; }
-.picker-btn, .picker-list button {
-  border: 1px solid var(--line);
+body[data-theme] .top,
+body[data-theme] .menu,
+body[data-theme] .panel,
+body[data-theme] .card,
+body[data-theme] .discord-pop,
+body[data-theme] .picker-list {
   background: var(--bg-2);
+  border-color: var(--line);
   color: var(--ink);
-  border-radius: 10px;
-  padding: 8px 12px;
-  font: inherit;
-  cursor: pointer;
 }
-.picker-list {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 6px);
-  z-index: 20;
-  min-width: 160px;
-  max-height: 240px;
-  overflow: auto;
-  display: none;
-  padding: 6px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--bg);
-  box-shadow: var(--shadow);
-}
-.picker.open .picker-list { display: grid; gap: 4px; }
-.picker-list button { text-align: left; background: transparent; }
-.picker-list button.active { border-color: var(--accent); }
-body[data-theme="ios"] {
-  --bg: #0a1020;
-  --bg-2: rgba(255, 255, 255, 0.16);
-  --ink: #f7f9ff;
-  --muted: #d5def2;
-  --line: rgba(255, 255, 255, 0.34);
-  --accent: #9ec5ff;
-  --shadow: 0 20px 50px rgba(4, 8, 20, 0.35);
-}
-body[data-theme="ios"] {
-  background:
-    radial-gradient(900px 520px at 12% -8%, rgba(150, 200, 255, 0.45), transparent 55%),
-    radial-gradient(700px 460px at 92% 8%, rgba(210, 160, 255, 0.32), transparent 52%),
-    radial-gradient(500px 380px at 50% 110%, rgba(120, 220, 255, 0.22), transparent 50%),
-    #0a1020;
-}
-body[data-theme="ios"] .top,
-body[data-theme="ios"] .menu,
-body[data-theme="ios"] .panel,
-body[data-theme="ios"] .discord-pop,
-body[data-theme="ios"] .card,
-body[data-theme="ios"] .picker-list,
-body[data-theme="ios"] .status-btn,
-body[data-theme="ios"] .menu-btn,
-body[data-theme="ios"] footer,
-body[data-theme="ios"] .socials a,
-body[data-theme="ios"] .status-row,
-body[data-theme="ios"] input,
-body[data-theme="ios"] .picker-btn {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.05));
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(30px) saturate(185%);
-  -webkit-backdrop-filter: blur(30px) saturate(185%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
-    0 16px 40px rgba(0, 0, 0, 0.22);
-}
-body[data-theme="ios"] .card,
-body[data-theme="ios"] .menu,
-body[data-theme="ios"] .panel,
-body[data-theme="ios"] button,
-body[data-theme="ios"] .join,
-body[data-theme="ios"] input,
-body[data-theme="ios"] .socials a,
-body[data-theme="ios"] footer { border-radius: 24px; }
-body[data-theme="ios"] .top { border-radius: 0 0 22px 22px; }
-body[data-theme="ios"] .join,
-body[data-theme="ios"] .upload button,
-body[data-theme="ios"] .card button {
-  background: linear-gradient(180deg, rgba(210, 230, 255, 0.92), rgba(130, 175, 255, 0.78));
-  color: #081018;
+body[data-theme] .join,
+body[data-theme] .upload button,
+body[data-theme] .card button {
+  background: var(--accent);
+  color: var(--btn);
   border: 0;
 }
-body[data-theme="ios"] .card button.danger { background: rgba(255, 120, 120, 0.35); color: #fff; }
-body[data-theme="ios"] .files { padding-top: 28px; }
-body[data-theme="ios"] .intro { background: rgba(8, 12, 24, 0.72); backdrop-filter: blur(18px); }
-body[data-theme="glitch"] { --bg: #030303; --bg-2: #0c0c0c; --ink: #f4fff4; --muted: #ff4fd8; --line: rgba(57,255,20,.35); --accent: #39ff14; }
-body[data-theme="glitch"] {
-  background:
-    repeating-linear-gradient(0deg, rgba(57,255,20,.05) 0 1px, transparent 1px 4px),
-    #030303;
+body[data-theme] .card button.danger { background: transparent; color: #e7b2a8; border: 1px solid var(--line); }
+
+body[data-theme="light"] { --bg:#f4efe6; --bg-2:#fffdf8; --ink:#1a1612; --muted:#5e564c; --line:rgba(26,22,18,.14); --accent:#8d6230; --btn:#fffdf8; --shadow:0 12px 30px rgba(60,40,10,.08); }
+body[data-theme="light"] { background: radial-gradient(700px 400px at 10% -10%, rgba(141,98,48,.12), transparent 50%), #f4efe6; }
+body[data-theme="light"] .top, body[data-theme="light"] .menu, body[data-theme="light"] .panel, body[data-theme="light"] .discord-pop { background: rgba(255,253,248,.94); }
+
+body[data-theme="blue"] { --bg:#0d1520; --bg-2:#152033; --ink:#e8eef8; --muted:#9aabc2; --line:rgba(232,238,248,.14); --accent:#7eb6ff; --btn:#081018; }
+body[data-theme="blue"] { background: radial-gradient(800px 460px at 80% -10%, rgba(126,182,255,.22), transparent 55%), #0d1520; }
+
+body[data-theme="minecraft"] { --bg:#1d2a16; --bg-2:#31441f; --ink:#f3f7df; --muted:#c5d39a; --line:#5d7c32; --accent:#7cb342; --btn:#14200f; --shadow:0 8px 0 rgba(0,0,0,.25); }
+body[data-theme="minecraft"] { background: linear-gradient(#87b35a, #1d2a16 28%); }
+body[data-theme="minecraft"] .card, body[data-theme="minecraft"] .menu, body[data-theme="minecraft"] .panel, body[data-theme="minecraft"] button, body[data-theme="minecraft"] .join { border-radius: 2px; box-shadow: inset -3px -3px 0 rgba(0,0,0,.25), inset 3px 3px 0 rgba(255,255,255,.08); }
+body[data-theme="minecraft"] .top { background: #5d7c32; }
+
+body[data-theme="roblox"] { --bg:#111214; --bg-2:#1b1d20; --ink:#f4f4f4; --muted:#b7b7b7; --line:rgba(244,244,244,.12); --accent:#e2231a; --btn:#fff; }
+body[data-theme="roblox"] { background: linear-gradient(180deg, #191b1f, #111214); }
+body[data-theme="roblox"] .top { border-bottom: 3px solid #e2231a; }
+body[data-theme="roblox"] .card { border-left: 4px solid #e2231a; }
+
+body[data-theme="mario"] { --bg:#1a2744; --bg-2:#243456; --ink:#fff; --muted:#c9d4ea; --line:rgba(255,255,255,.14); --accent:#e52521; --btn:#fff; }
+body[data-theme="mario"] { background: linear-gradient(#5c94fc, #1a2744 40%); }
+body[data-theme="mario"] .card { border-bottom: 4px solid #e52521; }
+body[data-theme="mario"] .join, body[data-theme="mario"] .upload button { background: #e52521; }
+
+body[data-theme="sonic"] { --bg:#06233f; --bg-2:#0c3358; --ink:#f4fbff; --muted:#b7d4ea; --line:rgba(244,251,255,.14); --accent:#1c9fff; --btn:#041424; }
+body[data-theme="sonic"] { background: radial-gradient(700px 400px at 100% 0%, rgba(28,159,255,.28), transparent 50%), linear-gradient(#0a3d66, #06233f); }
+body[data-theme="sonic"] .card { border-left: 4px solid #ffd200; }
+body[data-theme="sonic"] .top { border-bottom: 3px solid #ffd200; }
+
+body[data-theme="pokemon"] { --bg:#1c2430; --bg-2:#273140; --ink:#f7f7f2; --muted:#c5c8b8; --line:rgba(247,247,242,.14); --accent:#ffcb05; --btn:#1c2430; }
+body[data-theme="pokemon"] { background: radial-gradient(600px 360px at 0% 0%, rgba(255,203,5,.16), transparent 50%), #1c2430; }
+body[data-theme="pokemon"] .card { border-top: 4px solid #ffcb05; }
+body[data-theme="pokemon"] .join { background: #3b5ba7; color: #fff; }
+
+body[data-theme="fortnite"] { --bg:#10141c; --bg-2:#1a2230; --ink:#f3f6ff; --muted:#aeb8cc; --line:rgba(243,246,255,.14); --accent:#7d5cff; --btn:#fff; }
+body[data-theme="fortnite"] { background: radial-gradient(700px 420px at 90% -10%, rgba(125,92,255,.28), transparent 55%), #10141c; }
+body[data-theme="fortnite"] .card { border: 1px solid rgba(125,92,255,.45); }
+
+body[data-theme="amongus"] { --bg:#12151c; --bg-2:#1c2230; --ink:#f4f7ff; --muted:#b7c0d4; --line:rgba(244,247,255,.14); --accent:#c51111; --btn:#fff; }
+body[data-theme="amongus"] { background: radial-gradient(500px 300px at 10% 0%, rgba(197,17,17,.2), transparent 50%), #12151c; }
+body[data-theme="amongus"] .card { border-radius: 28px; }
+
+body[data-theme="zelda"] { --bg:#142016; --bg-2:#1d2c20; --ink:#f4f1df; --muted:#c9c3a4; --line:rgba(244,241,223,.16); --accent:#d4a017; --btn:#142016; }
+body[data-theme="zelda"] { background: radial-gradient(600px 360px at 50% -10%, rgba(212,160,23,.16), transparent 50%), #142016; }
+body[data-theme="zelda"] .card, body[data-theme="zelda"] .panel, body[data-theme="zelda"] .menu { border: 1px solid #d4a017; }
+
+body[data-theme="geometry"] { --bg:#12081c; --bg-2:#1d102c; --ink:#f6f2ff; --muted:#c2b6d8; --line:rgba(246,242,255,.14); --accent:#00e5ff; --btn:#081018; }
+body[data-theme="geometry"] { background: linear-gradient(135deg, #1a0a28, #12081c 40%, #0a1a28); }
+body[data-theme="geometry"] .card { border-left: 4px solid #00e5ff; transform: skewX(-2deg); }
+body[data-theme="geometry"] .card h3, body[data-theme="geometry"] .card p { transform: skewX(2deg); }
+
+body[data-theme="brawl"] { --bg:#1a1020; --bg-2:#2a1834; --ink:#fff5fb; --muted:#d7c0cf; --line:rgba(255,245,251,.14); --accent:#ff4fa3; --btn:#1a1020; }
+body[data-theme="brawl"] { background: radial-gradient(700px 420px at 80% 0%, rgba(255,79,163,.22), transparent 55%), #1a1020; }
+body[data-theme="brawl"] .card { border-radius: 26px; }
+
+body[data-theme="ios"] { --bg:#0a1020; --bg-2:rgba(255,255,255,.16); --ink:#f7f9ff; --muted:#d5def2; --line:rgba(255,255,255,.34); --accent:#9ec5ff; --btn:#081018; }
+body[data-theme="ios"] { background: radial-gradient(900px 520px at 12% -8%, rgba(150,200,255,.45), transparent 55%), radial-gradient(700px 460px at 92% 8%, rgba(210,160,255,.32), transparent 52%), #0a1020; }
+body[data-theme="ios"] .top, body[data-theme="ios"] .menu, body[data-theme="ios"] .panel, body[data-theme="ios"] .discord-pop, body[data-theme="ios"] .card, body[data-theme="ios"] .picker-list, body[data-theme="ios"] footer, body[data-theme="ios"] input, body[data-theme="ios"] .status-btn, body[data-theme="ios"] .menu-btn {
+  background: linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,255,255,.08) 42%, rgba(255,255,255,.04));
+  border: 1px solid rgba(255,255,255,.4);
+  backdrop-filter: blur(30px) saturate(185%);
+  -webkit-backdrop-filter: blur(30px) saturate(185%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 16px 40px rgba(0,0,0,.22);
+  border-radius: 24px;
 }
-body[data-theme="glitch"] .brand,
-body[data-theme="glitch"] h2,
-body[data-theme="glitch"] .card h3 {
-  animation: glitchText 1.2s ease-in-out infinite;
+body[data-theme="ios"] .top { border-radius: 0 0 22px 22px; }
+body[data-theme="ios"] .join, body[data-theme="ios"] .upload button { background: linear-gradient(180deg, rgba(210,230,255,.92), rgba(130,175,255,.78)); color: #081018; }
+
+body[data-theme="glitch"] { --bg:#030303; --bg-2:#0c0c0c; --ink:#f4fff4; --muted:#ff4fd8; --line:rgba(57,255,20,.35); --accent:#39ff14; --btn:#030303; }
+body[data-theme="glitch"] { background: repeating-linear-gradient(0deg, rgba(57,255,20,.05) 0 1px, transparent 1px 4px), #030303; }
+body[data-theme="glitch"] .card, body[data-theme="glitch"] .card.from-left, body[data-theme="glitch"] .card.from-right {
+  opacity: 1 !important; transform: none !important; animation: none !important; visibility: visible !important; content-visibility: visible !important;
+  border-color: rgba(57,255,20,.45); box-shadow: 2px 0 #ff2bd6, -2px 0 #39ff14;
 }
-body[data-theme="glitch"] .card,
-body[data-theme="glitch"] .card.from-left,
-body[data-theme="glitch"] .card.from-right {
-  opacity: 1 !important;
-  transform: none !important;
-  animation: none !important;
-  visibility: visible !important;
-  content-visibility: visible !important;
-  border-color: rgba(57, 255, 20, 0.45);
-  box-shadow: 2px 0 #ff2bd6, -2px 0 #39ff14;
-}
-body[data-theme="glitch"] .top,
-body[data-theme="glitch"] .panel,
-body[data-theme="glitch"] .menu {
-  box-shadow: 2px 0 #ff2bd6, -2px 0 #39ff14;
-}
+body[data-theme="glitch"] .brand, body[data-theme="glitch"] h2, body[data-theme="glitch"] .card h3 { animation: glitchText 1.2s ease-in-out infinite; }
 @keyframes glitchText {
   0%, 86%, 100% { transform: none; text-shadow: 1px 0 #ff2bd6, -1px 0 #39ff14; }
-  88% { transform: translate(-1px, 0); text-shadow: -2px 0 #39ff14, 2px 0 #ff2bd6; }
+  88% { transform: translate(-1px, 0); }
   92% { transform: translate(1px, 0); }
-  96% { transform: none; }
 }
+
 .card { content-visibility: auto; contain-intrinsic-size: 140px; }
 
 .top-actions { display: flex; align-items: center; gap: 8px; }
