@@ -242,9 +242,8 @@ function renderFiles(items) {
       grid.innerHTML = '<p class="empty">No files yet.</p>';
       return;
     }
-    const wait = document.body.classList.contains('booting') ? 2500 : 0;
     grid.innerHTML = items.map((item, i) => `
-      <article class="card ${i % 2 ? 'from-right' : 'from-left'}" style="animation-delay:${wait + i * 180}ms">
+      <article class="card" data-side="${i % 2 ? 'right' : 'left'}" data-i="${i}">
         <div class="type">${item.type || 'file'}</div>
         <h3>${item.name}</h3>
         <p>${item.note || 'Click copy'}</p>
@@ -260,7 +259,27 @@ function renderFiles(items) {
     grid.querySelectorAll('[data-del]').forEach(button => {
       button.onclick = () => deleteFile(items[button.dataset.del]);
     });
-    items.forEach((_, i) => setTimeout(playSlide, wait + i * 180));
+    startFileSlides();
+}
+function startFileSlides() {
+  const run = () => {
+    grid.querySelectorAll('.card').forEach((card, i) => {
+      card.style.animation = 'none';
+      card.classList.remove('from-left', 'from-right');
+      void card.offsetWidth;
+      card.style.animationDelay = (i * 160) + 'ms';
+      card.classList.add(card.dataset.side === 'right' ? 'from-right' : 'from-left');
+      setTimeout(playSlide, i * 160);
+    });
+  };
+  if (document.body.classList.contains('booting')) {
+    const wait = setInterval(() => {
+      if (!document.body.classList.contains('booting')) {
+        clearInterval(wait);
+        setTimeout(run, 200);
+      }
+    }, 100);
+  } else run();
 }
 
 async function loadFiles() {
