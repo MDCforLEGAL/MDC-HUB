@@ -419,14 +419,19 @@ body[data-theme="ios"] .discord-pop,
 body[data-theme="ios"] .card,
 body[data-theme="ios"] .picker-list,
 body[data-theme="ios"] .status-btn,
-body[data-theme="ios"] .menu-btn {
+body[data-theme="ios"] .menu-btn,
+body[data-theme="ios"] footer,
+body[data-theme="ios"] .socials a,
+body[data-theme="ios"] .status-row,
+body[data-theme="ios"] input,
+body[data-theme="ios"] .picker-btn {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0.08) 42%, rgba(255,255,255,0.04));
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
+    linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.05));
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(30px) saturate(185%);
+  -webkit-backdrop-filter: blur(30px) saturate(185%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
     inset 0 -1px 0 rgba(255, 255, 255, 0.08),
     0 16px 40px rgba(0, 0, 0, 0.22);
 }
@@ -435,56 +440,47 @@ body[data-theme="ios"] .menu,
 body[data-theme="ios"] .panel,
 body[data-theme="ios"] button,
 body[data-theme="ios"] .join,
-body[data-theme="ios"] input { border-radius: 24px; }
+body[data-theme="ios"] input,
+body[data-theme="ios"] .socials a,
+body[data-theme="ios"] footer { border-radius: 24px; }
+body[data-theme="ios"] .top { border-radius: 0 0 22px 22px; }
 body[data-theme="ios"] .join,
-body[data-theme="ios"] .upload button {
-  background: linear-gradient(180deg, rgba(190, 220, 255, 0.9), rgba(120, 170, 255, 0.75));
+body[data-theme="ios"] .upload button,
+body[data-theme="ios"] .card button {
+  background: linear-gradient(180deg, rgba(210, 230, 255, 0.92), rgba(130, 175, 255, 0.78));
   color: #081018;
   border: 0;
 }
+body[data-theme="ios"] .card button.danger { background: rgba(255, 120, 120, 0.35); color: #fff; }
+body[data-theme="ios"] .files { padding-top: 28px; }
+body[data-theme="ios"] .intro { background: rgba(8, 12, 24, 0.72); backdrop-filter: blur(18px); }
 body[data-theme="glitch"] { --bg: #030303; --bg-2: #0c0c0c; --ink: #f4fff4; --muted: #ff4fd8; --line: rgba(57,255,20,.35); --accent: #39ff14; }
 body[data-theme="glitch"] {
   background:
-    repeating-linear-gradient(0deg, rgba(57,255,20,.06) 0 1px, transparent 1px 3px),
-    radial-gradient(500px 300px at 80% 0%, rgba(255, 43, 214, 0.12), transparent 50%),
+    repeating-linear-gradient(0deg, rgba(57,255,20,.05) 0 1px, transparent 1px 4px),
     #030303;
-}
-body[data-theme="glitch"]::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 30;
-  background: repeating-linear-gradient(180deg, rgba(255,255,255,.04) 0 2px, transparent 2px 6px);
-  mix-blend-mode: overlay;
-  animation: scan 6s linear infinite;
 }
 body[data-theme="glitch"] .brand,
 body[data-theme="glitch"] h2,
-body[data-theme="glitch"] h3 {
-  animation: glitchText 0.7s steps(2, end) infinite;
+body[data-theme="glitch"] .card h3 {
+  animation: glitchText 1.2s ease-in-out infinite;
 }
 body[data-theme="glitch"] .card {
-  animation: glitchCard 1.1s steps(2, end) infinite;
+  opacity: 1;
+  border-color: rgba(57, 255, 20, 0.45);
+  box-shadow: 2px 0 #ff2bd6, -2px 0 #39ff14;
 }
-body[data-theme="glitch"] .card:nth-child(even) { animation-delay: 0.18s; }
 body[data-theme="glitch"] .top,
 body[data-theme="glitch"] .panel,
 body[data-theme="glitch"] .menu {
-  box-shadow: 3px 0 #ff2bd6, -3px 0 #39ff14;
+  box-shadow: 2px 0 #ff2bd6, -2px 0 #39ff14;
 }
 @keyframes glitchText {
-  0%, 100% { transform: none; text-shadow: 2px 0 #ff2bd6, -2px 0 #39ff14; }
-  25% { transform: translate(-2px, 1px); text-shadow: -3px 0 #39ff14, 3px 0 #ff2bd6; }
-  50% { transform: translate(2px, -1px) skewX(-4deg); filter: hue-rotate(50deg); }
-  75% { transform: translate(-1px, 0); text-shadow: 4px 0 #ff2bd6, -4px 0 #39ff14; }
+  0%, 86%, 100% { transform: none; text-shadow: 1px 0 #ff2bd6, -1px 0 #39ff14; }
+  88% { transform: translate(-1px, 0); text-shadow: -2px 0 #39ff14, 2px 0 #ff2bd6; }
+  92% { transform: translate(1px, 0); }
+  96% { transform: none; }
 }
-@keyframes glitchCard {
-  0%, 100% { transform: none; }
-  30% { transform: translateX(-3px); }
-  60% { transform: translateX(3px); filter: hue-rotate(25deg); }
-}
-@keyframes scan { to { transform: translateY(40px); } }
 .card { content-visibility: auto; contain-intrinsic-size: 140px; }
 
 .top-actions { display: flex; align-items: center; gap: 8px; }
