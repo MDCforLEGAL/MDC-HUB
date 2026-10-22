@@ -487,6 +487,16 @@ async function loadMe() {
   window.mdcUser = data.user;
   const btn = document.getElementById('login-btn');
   btn.textContent = data.user ? data.user.username : 'Login';
-  btn.onclick = () => { location.href = data.user ? '/api/logout' : '/api/auth/discord'; };
+  btn.onclick = () => {
+    if (!data.user) return location.href = '/api/auth/discord';
+    const box = document.getElementById('account-box');
+    const avatar = data.user.avatar ? 'https://cdn.discordapp.com/avatars/' + data.user.id + '/' + data.user.avatar + '.png' : '';
+    box.innerHTML = (avatar ? '<img src="' + avatar + '" alt="">' : '') + '<strong>' + esc(data.user.username) + '</strong><span>Discord ID: ' + esc(data.user.id) + '</span>';
+    document.querySelectorAll('.panel-page').forEach(page => page.classList.remove('active'));
+    document.getElementById('account').classList.add('active');
+    menu.classList.remove('open');
+    menuBtn.classList.remove('open');
+    panel.classList.add('open');
+  };
 }
 loadMe();

@@ -427,3 +427,7 @@ body[data-theme="glitch"] .brand, body[data-theme="glitch"] h2, body[data-theme=
 .comment { padding-top: 8px; border-top: 1px solid var(--line); }
 .comment strong { font-size: 13px; }
 .comments input, .comments button { border: 1px solid var(--line); border-radius: 10px; background: transparent; color: var(--ink); padding: 8px 10px; font: inherit; }
+
+.account { display: grid; gap: 8px; margin-bottom: 16px; }
+.account img { width: 72px; height: 72px; border-radius: 50%; }
+#logout-btn { display: inline-block; text-align: center; }

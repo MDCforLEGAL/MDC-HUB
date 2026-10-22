@@ -198,7 +198,7 @@ function cookieUser(request, env) {
   try { return JSON.parse(decodeURIComponent(raw.slice(9))); } catch { return null; }
 }
 function userCookie(user) {
-  const value = encodeURIComponent(JSON.stringify({ id: user.id, username: user.username }));
+  const value = encodeURIComponent(JSON.stringify({ id: user.id, username: user.username, avatar: user.avatar || '' }));
   return 'mdc_user=' + value + '; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800';
 }
 function discordLogin(request, env) {
