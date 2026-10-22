@@ -263,14 +263,7 @@ function renderFiles(items) {
         </div>
         <div class="react">
           <button type="button" class="like ${liked.includes(item.name) ? 'on' : ''}" data-like="${i}">Like ${item.likes || 0}</button>
-        </div>
-        <div class="comments">
-          ${(item.comments || []).map(c => '<div class="comment"><strong>' + esc(c.name) + '</strong><span>' + esc(c.text) + '</span></div>').join('')}
-          <form data-comment="${i}">
-            <input name="name" placeholder="Name" maxlength="24" required>
-            <input name="text" placeholder="Comment" maxlength="160" required>
-            <button>Comment</button>
-          </form>
+          <button type="button" data-comments="${i}">Comments ${(item.comments || []).length}</button>
         </div>
       </article>
     `).join('');
@@ -283,9 +276,22 @@ function renderFiles(items) {
     grid.querySelectorAll('[data-like]').forEach(button => {
       button.onclick = () => likeFile(items[button.dataset.like], button);
     });
-    grid.querySelectorAll('[data-comment]').forEach(form => {
-      form.onsubmit = (e) => commentFile(e, items[form.dataset.comment]);
+    grid.querySelectorAll('[data-comments]').forEach(button => {
+      button.onclick = () => openComments(items[button.dataset.comments]);
     });
+}
+let commentItem = null;
+function openComments(item) {
+  commentItem = item;
+  document.getElementById('comment-title').textContent = item.name;
+  const list = document.getElementById('comment-list');
+  const comments = item.comments || [];
+  list.innerHTML = comments.length ? comments.map(c => '<div class="comment"><strong>' + esc(c.name) + '</strong><span>' + esc(c.text) + '</span></div>').join('') : '<p>No comments yet.</p>';
+  document.querySelectorAll('.panel-page').forEach(page => page.classList.remove('active'));
+  document.getElementById('comments').classList.add('active');
+  menu.classList.remove('open');
+  menuBtn.classList.remove('open');
+  panel.classList.add('open');
 }
 async function likeFile(item, button) {
   const liked = JSON.parse(localStorage.getItem('mdc-likes') || '[]');
@@ -298,15 +304,16 @@ async function likeFile(item, button) {
   button.classList.add('on');
   button.textContent = 'Like ' + data.likes;
 }
-async function commentFile(event, item) {
+document.getElementById('comment-form').onsubmit = async (event) => {
   event.preventDefault();
+  if (!commentItem) return;
   const form = event.target;
-  const res = await fetch('/api/comment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: item.name, user: form.name.value, text: form.text.value }) });
+  const res = await fetch('/api/comment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: commentItem.name, user: form.name.value, text: form.text.value }) });
   const data = await res.json().catch(() => ({}));
   if (!data.ok) return alert(data.error || 'Comment failed');
   form.reset();
-  loadFiles();
-}
+  await loadFiles();
+};
 
 async function loadFiles() {
   try {
