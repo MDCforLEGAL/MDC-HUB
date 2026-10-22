@@ -236,6 +236,15 @@ async function deleteFile(item) {
   loadFiles();
 }
 
+function esc(value) {
+  return String(value || '').replace(/[&<>"']/g, (s) => ({
+    '&': '&',
+    '<': '<',
+    '>': '>',
+    '"': '"',
+    "'": '&#39;'
+  }[s]));
+}
 function renderFiles(items) {
     count.textContent = items.length + (items.length === 1 ? ' file' : ' files');
     if (!items.length) {
@@ -256,7 +265,7 @@ function renderFiles(items) {
           <button type="button" class="like ${liked.includes(item.name) ? 'on' : ''}" data-like="${i}">Like ${item.likes || 0}</button>
         </div>
         <div class="comments">
-          ${(item.comments || []).map(c => '<div class="comment"><strong>' + c.name + '</strong><span>' + c.text + '</span></div>').join('')}
+          ${(item.comments || []).map(c => '<div class="comment"><strong>' + esc(c.name) + '</strong><span>' + esc(c.text) + '</span></div>').join('')}
           <form data-comment="${i}">
             <input name="name" placeholder="Name" maxlength="24" required>
             <input name="text" placeholder="Comment" maxlength="160" required>
