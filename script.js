@@ -264,9 +264,10 @@ function renderFiles(items) {
 function startFileSlides() {
   const run = () => {
     grid.querySelectorAll('.card').forEach((card, i) => {
-      card.style.animation = 'none';
       card.classList.remove('from-left', 'from-right');
+      card.style.animation = 'none';
       void card.offsetWidth;
+      card.style.animation = '';
       card.style.animationDelay = (i * 160) + 'ms';
       card.classList.add(card.dataset.side === 'right' ? 'from-right' : 'from-left');
       setTimeout(playSlide, i * 160);
