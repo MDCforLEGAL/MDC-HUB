@@ -1,5 +1,11 @@
 [
   {
+    "name": "mdc x-geo.txt",
+    "file": "https://raw.githubusercontent.com/MDCforLEGAL/MDC-HUB/main/files/mdc%20x-geo.txt",
+    "type": "text/plain",
+    "note": "MDC HUB X-GEO"
+  },
+  {
     "name": "mdc-reborn-v5.txt",
     "file": "https://raw.githubusercontent.com/MDCforLEGAL/MDC-HUB/main/files/mdc-reborn-v5.txt",
     "type": "text/plain",
