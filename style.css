@@ -465,8 +465,14 @@ body[data-theme="glitch"] h2,
 body[data-theme="glitch"] .card h3 {
   animation: glitchText 1.2s ease-in-out infinite;
 }
-body[data-theme="glitch"] .card {
-  opacity: 1;
+body[data-theme="glitch"] .card,
+body[data-theme="glitch"] .card.from-left,
+body[data-theme="glitch"] .card.from-right {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  visibility: visible !important;
+  content-visibility: visible !important;
   border-color: rgba(57, 255, 20, 0.45);
   box-shadow: 2px 0 #ff2bd6, -2px 0 #39ff14;
 }
