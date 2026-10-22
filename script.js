@@ -242,14 +242,26 @@ function renderFiles(items) {
       grid.innerHTML = '<p class="empty">No files yet.</p>';
       return;
     }
+    const liked = JSON.parse(localStorage.getItem('mdc-likes') || '[]');
     grid.innerHTML = items.map((item, i) => `
-      <article class="card" data-side="${i % 2 ? 'right' : 'left'}" data-i="${i}">
+      <article class="card">
         <div class="type">${item.type || 'file'}</div>
         <h3>${item.name}</h3>
         <p>${item.note || 'Click copy'}</p>
         <div class="actions">
           <button type="button" data-copy="${i}">Copy</button>
           <button type="button" class="danger" data-del="${i}">Delete</button>
+        </div>
+        <div class="react">
+          <button type="button" class="like ${liked.includes(item.name) ? 'on' : ''}" data-like="${i}">Like ${item.likes || 0}</button>
+        </div>
+        <div class="comments">
+          ${(item.comments || []).map(c => '<div class="comment"><strong>' + c.name + '</strong><span>' + c.text + '</span></div>').join('')}
+          <form data-comment="${i}">
+            <input name="name" placeholder="Name" maxlength="24" required>
+            <input name="text" placeholder="Comment" maxlength="160" required>
+            <button>Comment</button>
+          </form>
         </div>
       </article>
     `).join('');
@@ -259,28 +271,32 @@ function renderFiles(items) {
     grid.querySelectorAll('[data-del]').forEach(button => {
       button.onclick = () => deleteFile(items[button.dataset.del]);
     });
-    startFileSlides();
-}
-function startFileSlides() {
-  const run = () => {
-    grid.querySelectorAll('.card').forEach((card, i) => {
-      card.classList.remove('from-left', 'from-right');
-      card.style.animation = 'none';
-      void card.offsetWidth;
-      card.style.animation = '';
-      card.style.animationDelay = (i * 160) + 'ms';
-      card.classList.add(card.dataset.side === 'right' ? 'from-right' : 'from-left');
-      setTimeout(playSlide, i * 160);
+    grid.querySelectorAll('[data-like]').forEach(button => {
+      button.onclick = () => likeFile(items[button.dataset.like], button);
     });
-  };
-  if (document.body.classList.contains('booting')) {
-    const wait = setInterval(() => {
-      if (!document.body.classList.contains('booting')) {
-        clearInterval(wait);
-        setTimeout(run, 200);
-      }
-    }, 100);
-  } else run();
+    grid.querySelectorAll('[data-comment]').forEach(form => {
+      form.onsubmit = (e) => commentFile(e, items[form.dataset.comment]);
+    });
+}
+async function likeFile(item, button) {
+  const liked = JSON.parse(localStorage.getItem('mdc-likes') || '[]');
+  if (liked.includes(item.name)) return;
+  const res = await fetch('/api/like', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: item.name }) });
+  const data = await res.json().catch(() => ({}));
+  if (!data.ok) return;
+  liked.push(item.name);
+  localStorage.setItem('mdc-likes', JSON.stringify(liked));
+  button.classList.add('on');
+  button.textContent = 'Like ' + data.likes;
+}
+async function commentFile(event, item) {
+  event.preventDefault();
+  const form = event.target;
+  const res = await fetch('/api/comment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: item.name, user: form.name.value, text: form.text.value }) });
+  const data = await res.json().catch(() => ({}));
+  if (!data.ok) return alert(data.error || 'Comment failed');
+  form.reset();
+  loadFiles();
 }
 
 async function loadFiles() {

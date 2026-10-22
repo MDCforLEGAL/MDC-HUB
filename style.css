@@ -154,19 +154,8 @@ h2 { margin: 0; font-size: 32px; }
   color: inherit;
   text-decoration: none;
   box-shadow: var(--shadow);
-  opacity: 0;
   transition: transform 0.25s ease, border-color 0.25s ease;
 }
-.card.from-left { transform: translateX(-56px); animation-name: slideLeft; }
-.card.from-right { transform: translateX(56px); animation-name: slideRight; }
-.card.from-left, .card.from-right {
-  animation-duration: 0.55s;
-  animation-timing-function: ease;
-  animation-fill-mode: forwards;
-  content-visibility: visible;
-}
-@keyframes slideLeft { to { opacity: 1; transform: none; } }
-@keyframes slideRight { to { opacity: 1; transform: none; } }
 .card:hover { transform: translateY(-4px); border-color: rgba(215, 196, 163, 0.45); }
 .card .type { color: var(--accent); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; }
 .card h3 { margin: 10px 0 6px; font-size: 20px; }
@@ -430,3 +419,11 @@ body[data-theme="glitch"] .brand, body[data-theme="glitch"] h2, body[data-theme=
 .panel-nav { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
 .status-list { display: grid; gap: 10px; }
 .status-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+
+.react { display: flex; gap: 8px; margin-top: 12px; }
+.like.on { border-color: var(--accent); }
+.comments { display: grid; gap: 8px; margin-top: 12px; }
+.comments form, .comment { display: grid; gap: 6px; }
+.comment { padding-top: 8px; border-top: 1px solid var(--line); }
+.comment strong { font-size: 13px; }
+.comments input, .comments button { border: 1px solid var(--line); border-radius: 10px; background: transparent; color: var(--ink); padding: 8px 10px; font: inherit; }
