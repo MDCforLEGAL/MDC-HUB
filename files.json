@@ -4,8 +4,10 @@
     "file": "https://raw.githubusercontent.com/MDCforLEGAL/MDC-HUB/main/files/mdc%20x-geo.txt",
     "type": "text/plain",
     "note": "MDC HUB X-GEO",
-    "likedBy": [],
-    "likes": 0
+    "likedBy": [
+      "1213116842521137205"
+    ],
+    "likes": 1
   },
   {
     "name": "mdc-reborn-v5.txt",
