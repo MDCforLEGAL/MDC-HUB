@@ -252,7 +252,6 @@ function renderFiles(items) {
       grid.innerHTML = '<p class="empty">No files yet.</p>';
       return;
     }
-    const liked = JSON.parse(localStorage.getItem('mdc-likes') || '[]');
     grid.innerHTML = items.map((item, i) => `
       <article class="card">
         <div class="type">${item.type || 'file'}</div>
@@ -263,7 +262,7 @@ function renderFiles(items) {
           <button type="button" class="danger" data-del="${i}">Delete</button>
         </div>
         <div class="react">
-          <button type="button" class="like ${liked.includes(item.name) ? 'on' : ''}" data-like="${i}">Like ${item.likes || 0}</button>
+          <button type="button" class="like ${(item.likedBy || []).includes(window.mdcUser && window.mdcUser.id) ? 'on' : ''}" data-like="${i}">${(item.likedBy || []).includes(window.mdcUser && window.mdcUser.id) ? 'Unlike' : 'Like'} ${item.likes || 0}</button>
           <button type="button" data-comments="${i}">Comments ${(item.comments || []).length}</button>
         </div>
       </article>
@@ -295,21 +294,19 @@ function openComments(item) {
   panel.classList.add('open');
 }
 async function likeFile(item, button) {
-  const liked = JSON.parse(localStorage.getItem('mdc-likes') || '[]');
-  if (liked.includes(item.name)) return;
+  if (!window.mdcUser) return alert('Login with Discord first.');
   const res = await fetch('/api/like', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: item.name }) });
   const data = await res.json().catch(() => ({}));
-  if (!data.ok) return;
-  liked.push(item.name);
-  localStorage.setItem('mdc-likes', JSON.stringify(liked));
-  button.classList.add('on');
-  button.textContent = 'Like ' + data.likes;
+  if (!data.ok) return alert(data.error || 'Like failed');
+  button.classList.toggle('on', data.on);
+  button.textContent = (data.on ? 'Unlike ' : 'Like ') + data.likes;
 }
 document.getElementById('comment-form').onsubmit = async (event) => {
   event.preventDefault();
+  if (!window.mdcUser) return alert('Login with Discord first.');
   if (!commentItem) return;
   const form = event.target;
-  const res = await fetch('/api/comment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: commentItem.name, user: form.name.value, text: form.text.value }) });
+  const res = await fetch('/api/comment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: commentItem.name, text: form.text.value }) });
   const data = await res.json().catch(() => ({}));
   if (!data.ok) return alert(data.error || 'Comment failed');
   form.reset();
@@ -483,3 +480,13 @@ themeList.querySelectorAll('button').forEach(btn => {
     themePicker.classList.remove('open');
   };
 });
+
+async function loadMe() {
+  const res = await fetch('/api/me');
+  const data = await res.json().catch(() => ({}));
+  window.mdcUser = data.user;
+  const btn = document.getElementById('login-btn');
+  btn.textContent = data.user ? data.user.username : 'Login';
+  btn.onclick = () => { location.href = data.user ? '/api/logout' : '/api/auth/discord'; };
+}
+loadMe();

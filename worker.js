@@ -10,6 +10,10 @@ export default {
     if (url.pathname === '/api/delete' && request.method === 'POST') return deleteFile(request, env);
     if (url.pathname === '/api/like' && request.method === 'POST') return likeFile(request, env);
     if (url.pathname === '/api/comment' && request.method === 'POST') return commentFile(request, env);
+    if (url.pathname === '/api/auth/discord') return discordLogin(request, env);
+    if (url.pathname === '/api/auth/callback') return discordCallback(request, env);
+    if (url.pathname === '/api/me') return me(request, env);
+    if (url.pathname === '/api/logout') return logout();
     if (env.ASSETS) return env.ASSETS.fetch(request);
     return new Response('Not found', { status: 404 });
   }
@@ -188,25 +192,103 @@ async function saveList(headers, items, sha, message) {
     body: JSON.stringify({ message, content: btoa(unescape(encodeURIComponent(JSON.stringify(items, null, 2)))), sha })
   });
 }
+function cookieUser(request, env) {
+  const raw = (request.headers.get('Cookie') || '').split(';').map(s => s.trim()).find(s => s.startsWith('mdc_user='));
+  if (!raw) return null;
+  try { return JSON.parse(decodeURIComponent(raw.slice(9))); } catch { return null; }
+}
+function userCookie(user) {
+  const value = encodeURIComponent(JSON.stringify({ id: user.id, username: user.username }));
+  return 'mdc_user=' + value + '; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800';
+}
+function discordLogin(request, env) {
+  const id = envValue(env, ['DISCORD_CLIENT_ID']);
+  if (!id) return Response.json({ error: 'Discord login is not set up' }, { status: 500 });
+  const back = new URL(request.url).origin + '/api/auth/callback';
+  const url = 'https://discord.com/api/oauth2/authorize?client_id=' + id + '&redirect_uri=' + encodeURIComponent(back) + '&response_type=code&scope=identify';
+  return Response.redirect(url, 302);
+}
+async function discordCallback(request, env) {
+  const code = new URL(request.url).searchParams.get('code');
+  const id = envValue(env, ['DISCORD_CLIENT_ID']);
+  const secret = envValue(env, ['DISCORD_CLIENT_SECRET']);
+  if (!code || !id || !secret) return Response.redirect(new URL(request.url).origin + '/?login=fail', 302);
+  const back = new URL(request.url).origin + '/api/auth/callback';
+  const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ client_id: id, client_secret: secret, grant_type: 'authorization_code', code, redirect_uri: back })
+  });
+  const token = await tokenRes.json();
+  if (!token.access_token) return Response.redirect(new URL(request.url).origin + '/?login=fail', 302);
+  const meRes = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + token.access_token } });
+  const user = await meRes.json();
+  return new Response(null, { status: 302, headers: { Location: new URL(request.url).origin + '/', 'Set-Cookie': userCookie(user) } });
+}
+function me(request) {
+  return Response.json({ user: cookieUser(request) });
+}
+function logout() {
+  return new Response(null, { status: 302, headers: { Location: '/', 'Set-Cookie': 'mdc_user=; Path=/; Max-Age=0' } });
+}
+function isBad(text) {
+  const value = String(text || '');
+  if (/[<>]|script|onload|onerror/i.test(value)) return 'html';
+  const bad = ['amk','aq','orospu','sik','yarrak','fuck','shit','bitch','asshole'];
+  const low = value.toLowerCase();
+  return bad.some(word => low.includes(word)) ? 'language' : '';
+}
+async function punish(env, user, reason, text) {
+  const token = envValue(env, ['DISCORD_BOT_TOKEN']);
+  const guild = envValue(env, ['DISCORD_GUILD_ID']);
+  const channel = envValue(env, ['DISCORD_LOG_CHANNEL_ID']);
+  if (!token || !user) return;
+  const until = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+  if (guild) {
+    await fetch('https://discord.com/api/guilds/' + guild + '/members/' + user.id, {
+      method: 'PATCH',
+      headers: { Authorization: 'Bot ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ communication_disabled_until: until })
+    });
+  }
+  if (channel) {
+    await fetch('https://discord.com/api/channels/' + channel + '/messages', {
+      method: 'POST',
+      headers: { Authorization: 'Bot ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: 'Timeout 1h | ' + user.username + ' (' + user.id + ') | ' + reason + ' | ' + String(text).slice(0, 120) })
+    });
+  }
+}
 async function likeFile(request, env) {
+  const user = cookieUser(request, env);
+  if (!user) return Response.json({ error: 'Discord login required' }, { status: 401 });
   const body = await request.json().catch(() => ({}));
   const { items, sha, headers } = await readList(env);
   const item = items.find(entry => entry.name === body.name);
   if (!item) return Response.json({ error: 'Not found' }, { status: 404 });
-  item.likes = (item.likes || 0) + 1;
-  const save = await saveList(headers, items, sha, 'Like ' + item.name);
+  item.likedBy = item.likedBy || [];
+  const on = item.likedBy.includes(user.id);
+  item.likedBy = on ? item.likedBy.filter(id => id !== user.id) : [...item.likedBy, user.id];
+  item.likes = item.likedBy.length;
+  const save = await saveList(headers, items, sha, (on ? 'Unlike ' : 'Like ') + item.name);
   if (!save.ok) return Response.json({ error: 'Like failed' }, { status: 500 });
-  return Response.json({ ok: true, likes: item.likes });
+  return Response.json({ ok: true, likes: item.likes, on: !on });
 }
 async function commentFile(request, env) {
+  const user = cookieUser(request, env);
+  if (!user) return Response.json({ error: 'Discord login required' }, { status: 401 });
   const body = await request.json().catch(() => ({}));
-  const user = String(body.user || '').trim().slice(0, 24);
   const text = String(body.text || '').trim().slice(0, 160);
-  if (!user || !text) return Response.json({ error: 'Missing comment' }, { status: 400 });
+  if (!text) return Response.json({ error: 'Missing comment' }, { status: 400 });
+  const reason = isBad(text);
+  if (reason) {
+    await punish(env, user, reason, text);
+    return Response.json({ error: 'Removed. You are timed out for 1 hour.' }, { status: 403 });
+  }
   const { items, sha, headers } = await readList(env);
   const item = items.find(entry => entry.name === body.name);
   if (!item) return Response.json({ error: 'Not found' }, { status: 404 });
-  item.comments = [{ name: user, text }, ...(item.comments || [])].slice(0, 20);
+  item.comments = [{ name: user.username, text, id: user.id }, ...(item.comments || [])].slice(0, 20);
   const save = await saveList(headers, items, sha, 'Comment on ' + item.name);
   if (!save.ok) return Response.json({ error: 'Comment failed' }, { status: 500 });
   return Response.json({ ok: true });
