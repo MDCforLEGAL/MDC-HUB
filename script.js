@@ -246,6 +246,7 @@ function esc(value) {
   }[s]));
 }
 function renderFiles(items) {
+    window.mdcFiles = items;
     count.textContent = items.length + (items.length === 1 ? ' file' : ' files');
     if (!items.length) {
       grid.innerHTML = '<p class="empty">No files yet.</p>';
@@ -312,7 +313,10 @@ document.getElementById('comment-form').onsubmit = async (event) => {
   const data = await res.json().catch(() => ({}));
   if (!data.ok) return alert(data.error || 'Comment failed');
   form.reset();
+  const name = commentItem.name;
   await loadFiles();
+  const fresh = (window.mdcFiles || []).find(item => item.name === name);
+  if (fresh) openComments(fresh);
 };
 
 async function loadFiles() {
