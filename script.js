@@ -9,6 +9,7 @@ function applySettings() {
 applySettings();
 const themeSounds = {
   dark: { wave: 'sine', click: 540, intro: [392, 523], slide: 1 },
+  ios: { wave: 'sine', click: 660, intro: [523, 784], slide: 0.6 },
   light: { wave: 'sine', click: 620, intro: [440, 554], slide: 0.7 },
   blue: { wave: 'triangle', click: 500, intro: [349, 466], slide: 1 },
   minecraft: { wave: 'square', click: 392, intro: [349, 440], slide: 0.6 },
