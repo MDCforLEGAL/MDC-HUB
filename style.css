@@ -431,3 +431,8 @@ body[data-theme="glitch"] .brand, body[data-theme="glitch"] h2, body[data-theme=
 .account { display: grid; gap: 8px; margin-bottom: 16px; }
 .account img { width: 72px; height: 72px; border-radius: 50%; }
 #logout-btn { display: inline-block; text-align: center; }
+
+.live-dot { width: 10px; height: 10px; border-radius: 99px; display: inline-block; margin-left: 6px; background: #57F287; box-shadow: 0 0 0 0 rgba(87,242,135,.7); animation: pulse 1.4s ease-out infinite; }
+.live-dot.off { background: #ed4245; box-shadow: 0 0 0 0 rgba(237,66,69,.7); animation-name: pulse-off; }
+@keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(87,242,135,0); } 100% { box-shadow: 0 0 0 0 rgba(87,242,135,0); } }
+@keyframes pulse-off { 70% { box-shadow: 0 0 0 8px rgba(237,66,69,0); } 100% { box-shadow: 0 0 0 0 rgba(237,66,69,0); } }

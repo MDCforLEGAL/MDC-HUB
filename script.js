@@ -378,13 +378,17 @@ async function loadStatus() {
     data = await res.json();
   } catch {}
   const ms = Math.round(performance.now() - started);
-  box.innerHTML = [
-    ['Site', data.site || 'online'],
-    ['Bot', data.bot || 'unknown'],
-    ['Response', ms + ' ms']
-  ].map(row => '<div class="status-row"><span>' + row[0] + '</span><strong>' + row[1] + '</strong></div>').join('');
-  document.querySelector('.dot').textContent = data.bot === 'online' ? '🟢' : '🔴';
+  if (box) {
+    box.innerHTML = [
+      ['Site', data.site || 'online'],
+      ['Bot', data.bot || 'unknown'],
+      ['Response', ms + ' ms']
+    ].map(row => '<div class="status-row"><span>' + row[0] + '</span><strong>' + row[1] + '</strong></div>').join('');
+  }
+  const dot = document.getElementById('live-dot');
+  if (dot) dot.classList.toggle('off', data.bot !== 'online');
 }
+setInterval(loadStatus, 5000);
 document.getElementById('status-btn').onclick = () => {
   document.querySelectorAll('.panel-page').forEach(page => page.classList.remove('active'));
   document.getElementById('status').classList.add('active');
