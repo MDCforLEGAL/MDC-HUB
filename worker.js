@@ -14,6 +14,8 @@ export default {
     if (url.pathname === '/api/auth/callback') return discordCallback(request, env);
     if (url.pathname === '/api/me') return me(request, env);
     if (url.pathname === '/api/logout') return logout();
+    if (url.pathname === '/api/verify/start') return verifyStart(request, env);
+    if (url.pathname === '/api/verify/callback') return verifyCallback(request, env);
     if (env.ASSETS) return env.ASSETS.fetch(request);
     return new Response('Not found', { status: 404 });
   }
@@ -292,4 +294,49 @@ async function commentFile(request, env) {
   const save = await saveList(headers, items, sha, 'Comment on ' + item.name);
   if (!save.ok) return Response.json({ error: 'Comment failed' }, { status: 500 });
   return Response.json({ ok: true });
+}
+
+function verifyStart(request, env) {
+  const id = envValue(env, ['DISCORD_CLIENT_ID']);
+  if (!id) return Response.json({ error: 'Discord login is not set up' }, { status: 500 });
+  const back = new URL(request.url).origin + '/api/verify/callback';
+  const url = 'https://discord.com/api/oauth2/authorize?client_id=' + id + '&redirect_uri=' + encodeURIComponent(back) + '&response_type=code&scope=identify';
+  return Response.redirect(url, 302);
+}
+async function verifyCallback(request, env) {
+  const site = 'https://mdcforlegal.github.io/MDC-VERIFY/';
+  const code = new URL(request.url).searchParams.get('code');
+  const id = envValue(env, ['DISCORD_CLIENT_ID']);
+  const secret = envValue(env, ['DISCORD_CLIENT_SECRET']);
+  const token = envValue(env, ['DISCORD_BOT_TOKEN']);
+  const guild = envValue(env, ['DISCORD_GUILD_ID']);
+  if (!code || !id || !secret || !token || !guild) return Response.redirect(site + '?status=fail', 302);
+  const back = new URL(request.url).origin + '/api/verify/callback';
+  const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ client_id: id, client_secret: secret, grant_type: 'authorization_code', code, redirect_uri: back })
+  });
+  const oauth = await tokenRes.json();
+  if (!oauth.access_token) return Response.redirect(site + '?status=fail', 302);
+  const meRes = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + oauth.access_token } });
+  const user = await meRes.json();
+  const headers = { Authorization: 'Bot ' + token, 'Content-Type': 'application/json' };
+  const memberRes = await fetch('https://discord.com/api/guilds/' + guild + '/members/' + user.id, { headers });
+  if (memberRes.status === 404) return Response.redirect(site + '?status=notin', 302);
+  if (!memberRes.ok) return Response.redirect(site + '?status=fail', 302);
+  const member = await memberRes.json();
+  const rolesRes = await fetch('https://discord.com/api/guilds/' + guild + '/roles', { headers });
+  const roles = await rolesRes.json();
+  const verified = roles.find(r => r.name === 'MDC verified');
+  const unverified = roles.find(r => r.name === 'MDC unverified');
+  if (!verified) return Response.redirect(site + '?status=fail', 302);
+  if ((member.roles || []).includes(verified.id)) return Response.redirect(site + '?status=already', 302);
+  const next = (member.roles || []).filter(rid => !unverified || rid !== unverified.id);
+  next.push(verified.id);
+  const save = await fetch('https://discord.com/api/guilds/' + guild + '/members/' + user.id, { method: 'PATCH', headers, body: JSON.stringify({ roles: next }) });
+  if (!save.ok) return Response.redirect(site + '?status=fail', 302);
+  const channel = envValue(env, ['DISCORD_LOG_CHANNEL_ID']);
+  if (channel) await fetch('https://discord.com/api/channels/' + channel + '/messages', { method: 'POST', headers, body: JSON.stringify({ content: 'Verified ' + user.username + ' (' + user.id + ')' }) });
+  return Response.redirect(site + '?status=ok', 302);
 }
