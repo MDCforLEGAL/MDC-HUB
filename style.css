@@ -436,3 +436,10 @@ body[data-theme="glitch"] .brand, body[data-theme="glitch"] h2, body[data-theme=
 .live-dot.off { background: #ed4245; box-shadow: 0 0 0 0 rgba(237,66,69,.7); animation-name: pulse-off; }
 @keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(87,242,135,0); } 100% { box-shadow: 0 0 0 0 rgba(87,242,135,0); } }
 @keyframes pulse-off { 70% { box-shadow: 0 0 0 8px rgba(237,66,69,0); } 100% { box-shadow: 0 0 0 0 rgba(237,66,69,0); } }
+
+.closed { margin: 28px auto 8px; max-width: 720px; padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: var(--bg-2); text-align: center; }
+.closed h2 { margin: 0 0 8px; }
+.closed p { margin: 0; color: var(--muted); }
+.open-new { display: inline-block; margin-top: 16px; padding: 12px 18px; border-radius: 999px; background: var(--accent); color: #12110f; text-decoration: none; font-weight: 700; }
+
+.closed-state { color: #ed4245; }

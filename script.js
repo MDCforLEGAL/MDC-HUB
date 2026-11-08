@@ -380,13 +380,13 @@ async function loadStatus() {
   const ms = Math.round(performance.now() - started);
   if (box) {
     box.innerHTML = [
-      ['Site', data.site || 'online'],
+      ['Site', 'closed'],
       ['Bot', data.bot || 'unknown'],
       ['Response', ms + ' ms']
-    ].map(row => '<div class="status-row"><span>' + row[0] + '</span><strong>' + row[1] + '</strong></div>').join('');
+    ].map(row => '<div class="status-row"><span>' + row[0] + '</span><strong class="' + (row[0] === 'Site' ? 'closed-state' : '') + '">' + row[1] + '</strong></div>').join('');
   }
   const dot = document.getElementById('live-dot');
-  if (dot) dot.classList.toggle('off', data.bot !== 'online');
+  if (dot) dot.classList.add('off');
 }
 setInterval(loadStatus, 5000);
 document.getElementById('status-btn').onclick = () => {
