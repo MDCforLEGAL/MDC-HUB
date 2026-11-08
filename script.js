@@ -507,4 +507,4 @@ async function loadMe() {
 }
 loadMe();
 
-document.getElementById('close-warning').onclick = () => document.getElementById('closed-screen').classList.remove('show');
+document.getElementById('close-warning').addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); document.getElementById('closed-screen').classList.remove('show'); });
