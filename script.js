@@ -492,6 +492,8 @@ async function loadMe() {
   const btn = document.getElementById('login-btn');
   btn.textContent = data.user ? data.user.username : 'Login';
   btn.onclick = () => {
+    document.getElementById('closed-screen').classList.add('show');
+    return;
     if (!data.user) return location.href = '/api/auth/discord';
     const box = document.getElementById('account-box');
     const avatar = data.user.avatar ? 'https://cdn.discordapp.com/avatars/' + data.user.id + '/' + data.user.avatar + '.png' : '';
@@ -504,3 +506,5 @@ async function loadMe() {
   };
 }
 loadMe();
+
+document.getElementById('close-warning').onclick = () => document.getElementById('closed-screen').classList.remove('show');

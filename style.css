@@ -443,3 +443,10 @@ body[data-theme="glitch"] .brand, body[data-theme="glitch"] h2, body[data-theme=
 .open-new { display: inline-block; margin-top: 16px; padding: 12px 18px; border-radius: 999px; background: var(--accent); color: #12110f; text-decoration: none; font-weight: 700; }
 
 .closed-state { color: #ed4245; }
+
+.closed-screen { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; background: rgba(8, 8, 8, 0.92); padding: 20px; }
+.closed-screen.show { display: grid; }
+.closed-box { width: min(440px, 100%); background: var(--bg-2); border: 1px solid var(--line); border-radius: 20px; padding: 28px; text-align: center; }
+.closed-box h2 { margin: 0 0 8px; }
+.closed-box p { margin: 0; color: var(--muted); }
+#close-warning { margin-top: 12px; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 10px 16px; font: inherit; cursor: pointer; }
